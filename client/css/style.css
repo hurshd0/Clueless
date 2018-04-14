@@ -1,0 +1,71 @@
+body {
+  font-size: 16px;
+  /*color: #fff;*/
+  background-color: #a5a5af;
+  /*font-family: 'Oxygen', sans-serif;*/
+}
+
+/* HEADER */
+/*#header-nav {
+  background-color: #a5a5af;
+  border-radius: 0;
+  border: 0;
+}*/
+
+#logo-img {
+  background: url('/client/img/smallClue.png') no-repeat;
+  width: 80px;
+  height: 100px;
+  margin: 10px 15px 10px 0;
+}
+
+.navbar-brand {
+  padding-top: 40px;
+}
+.navbar-brand h1 {
+  /*font-family: 'Lora', serif;*/
+  color: #015249;
+  font-size: 1.5em;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-shadow: 1px 1px 1px #222;
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: .75;
+}
+.navbar-brand a:hover, .navbar-brand a:focus, #home a:hover {
+  text-decoration: none;
+}
+
+#nav-list {
+  margin-top: 10px;
+}
+#nav-list a {
+  color: #015249;
+  text-align: center;
+}
+#nav-list a:hover {
+  background: #77c9d4;
+}
+#nav-list a span {
+  font-size: 1.8em;
+}
+
+/* Main page */
+#msgDiv, #lobby, #gamearea {
+  display: none;
+}
+
+/* Lobby Page */
+.left {
+  border: 1px solid orange;
+  box-sizing: border-box;
+  width: 200px;
+  height: 300px;
+  float: left;
+  margin: 5px 5px 5px 5px;
+}
+
+.left:hover {
+  box-shadow: 0 1px 5px 1px orange;
+}
