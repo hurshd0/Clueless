@@ -73,6 +73,10 @@ io.on('connection', function(client) {
 			player.emit('drawboard', data[i]);
 		}
 	});
+
+	client.on('newPosition', function(data) {
+		client.broadcast.emit('move', data);
+	});
 });
 
 function checkName(name) {

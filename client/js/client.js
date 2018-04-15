@@ -6,8 +6,6 @@ var chatForm = document.getElementById('chatForm');
 var chatInput = document.getElementById('chatInput');
 var myCards = document.getElementById('myCards');
 var myCharacter = document.getElementById('myPlayer');
-// var secretEnvelope = null;
-// var clueDeck = null;
 
 // Suspect Deck
 var suspectDeck = new Deck();
@@ -41,13 +39,12 @@ roomDeck.add_card(new Card("Room", "Kitchen"));
 
 // Images
 var imageSrc = new Array();
-    imageSrc[0] = "/client/img/gamepieces/pieceRed_border00.png";
-    imageSrc[1] = "/client/img/gamepieces/pieceYellow_border00.png";
-    imageSrc[2] = "/client/img/gamepieces/pieceWhite_border00.png";
-    imageSrc[3] = "/client/img/gamepieces/pieceGreen_border00.png";
-    imageSrc[4] = "/client/img/gamepieces/pieceBlue_border00.png";
-    imageSrc[5] = "/client/img/gamepieces/piecePurple_border00.png";
-    imageSrc[6] = "/client/img/gameboard.png";
+    imageSrc[0] = "/client/img/smallPieceRed_border00.png";
+    imageSrc[1] = "/client/img/smallPieceYellow_border00.png";
+    imageSrc[2] = "/client/img/smallPieceWhite_border00.png";
+    imageSrc[3] = "/client/img/smallPieceGreen_border00.png";
+    imageSrc[4] = "/client/img/smallPieceBlue_border00.png";
+    imageSrc[5] = "/client/img/smallPiecePurple_border00.png";
 
 var gamePieceImgs = [];
 for (x = 0; x < imageSrc.length; x++) {
@@ -133,12 +130,31 @@ function main() {
         	}
         	myCards.innerHTML = html;
         	gameboard = new Board(imageSrc);
+        	gameboard.placeCharacters();
         });
 
         socket.on('setupGame', function(data) {
         	var response = setupGame(data);
         	socket.emit('setupComplete', response);
         });
+
+        socket.on('move', function(data) {
+        	gameboard.positions = data[0];
+        	document.getElementById(gameboard.positions[data[1]][data[2]].room + "1").src = "";
+        	gameboard.placeCharacters();
+        });
+
+        document.onkeydown = function(event) {
+			if(event.keyCode === 68) {			//d
+				movePlayer("right");
+			} else if(event.keyCode === 83) {  //s
+				movePlayer("down");
+			} else if(event.keyCode === 65) {  //a
+				movePlayer("left");
+			} else if(event.keyCode === 87) {  //w
+				movePlayer("up");
+			}
+		}
 	},
 	function(err) {
 		console.log(err);
@@ -248,4 +264,18 @@ function setupGame(playerNum) {
 	}
 
 	return response;
+}
+
+function movePlayer(dir) {
+	var newPosition = myPlayer.move(dir);
+	var isvalid = gameboard.checkPosition(newPosition, myPlayer.character);
+	if (isvalid[0]) {
+		var row = isvalid[1][0];
+		var col = isvalid[1][1];
+		myPlayer.position = newPosition;
+		document.getElementById(gameboard.positions[row][col].room + "1").src = "";
+		socket.emit('newPosition', [gameboard.positions, row,  col]);
+	} else {
+		alert('Invalid move');
+	}
 }
