@@ -62,10 +62,10 @@ function Player(id, name, character, position) {
 //     }
 // };
 
-Player.prototype.suggest = function() {
-	socket.emit('suggest', "This is a suggestion");
-};
+// Player.prototype.suggest = function() {
+// 	socket.emit('suggest', "This is a suggestion");
+// };
 
-Player.prototype.accuse = function() {
-	socket.emit('accuse', "This is an accusation");
-};
+// Player.prototype.accuse = function() {
+// 	socket.emit('accuse', "This is an accusation");
+// };

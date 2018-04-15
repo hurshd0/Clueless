@@ -20,6 +20,7 @@ var players = {"Miss Scarlet": {"id": 0, "position": [0, 3]},
 			"Mr Green": {"id": 4, "position": [4, 1]}, 
 			"Mrs White": {"id": 5, "position": [4, 3]}};
 var names = [];
+var secretEnvelope = null;
 
 var io = require('socket.io')(server, {});
 io.on('connection', function(client) {
@@ -45,12 +46,12 @@ io.on('connection', function(client) {
 		delete players[data];
 		CLIENT_LIST[client.id].character = data;
 		client.broadcast.emit('characters', players);
-		if (PLAYER_LIST.length >= 3) {
+		// if (PLAYER_LIST.length >= 3) {
 			if (gameReady()) {
 				client.emit('gameReady');
 				client.broadcast.emit('gameReady');
 			}
-		}
+		// }
 	});
 
 	client.on('checkName', function(data) {
@@ -59,9 +60,18 @@ io.on('connection', function(client) {
 	});
 
 	client.on('startGame', function() {
-		client.broadcast.emit('drawboard', players);
+		client.emit('setupGame', PLAYER_LIST.length);
 		gameStatus = 'Started';
 		client.broadcast.emit('gameStatus', gameStatus);
+	});
+
+	client.on('setupComplete', function(data) {
+		secretEnvelope = data.secret;
+		for(var i = 0; i < PLAYER_LIST.length; i++) {
+			var id = PLAYER_LIST[i];
+			var player = CLIENT_LIST[id];
+			player.emit('drawboard', data[i]);
+		}
 	});
 });
 

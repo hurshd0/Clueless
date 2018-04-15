@@ -12,6 +12,10 @@ body {
   border: 0;
 }*/
 
+div {
+  box-sizing: border-box;
+}
+
 #logo-img {
   background: url('/client/img/smallClue.png') no-repeat;
   width: 80px;
@@ -69,3 +73,162 @@ body {
 .left:hover {
   box-shadow: 0 1px 5px 1px orange;
 }
+/* End Lobby Page */
+
+/* gamearea */
+#gameboard {
+  width: 610px;
+  float: left;
+}
+
+.float {
+  float: left;
+  text-align: center;
+}
+
+.sixteen {
+  width: 16%;
+  height: 100px;
+  background-color: grey;
+}
+
+.eighteen {
+  width: 18%;
+  height: 100px;
+  background-color: grey;
+}
+
+.quarter {
+  width: 25%;
+  height: 30px;
+  margin-top: 35px;
+  background-color: grey;
+}
+
+.vHallway1 {
+  width: 6%;
+  height: 152.5px;
+  margin-left: 5%;
+  background-color: grey;
+}
+
+.vHallway2 {
+  width: 6%;
+  height: 152.5px;
+  margin-left: 36%;
+  background-color: grey;
+}
+
+.vHallway3 {
+  width: 6%;
+  height: 152.5px;
+  margin-left: 36%;
+  background-color: grey;
+}
+
+div.float {
+  box-sizing: border-box;
+}
+
+#study {
+  background-color: green;
+}
+
+#hall {
+  background-color: green;
+}
+
+#lounge {
+  background-color: green;
+}
+
+#dining {
+  background-color: green;
+}
+
+#billiard {
+  background-color: green;
+}
+
+#library {
+  background-color: green;
+}
+
+#conservatory {
+  background-color: green;
+}
+
+#ballroom {
+  background-color: green;
+}
+
+#kitchen {
+  background-color: green;
+}
+
+.pos1 {
+  position: relative;
+  left: 30px;
+  top: 30px;
+}
+
+.pos2 {
+  margin: 10px auto;
+}
+
+.pos3{
+  margin: 71.25px auto;
+  margin-top: 71.25px;
+}
+
+.pos4 {
+  position: relative;
+  left: 60px;
+  top: 50px;
+}
+
+.chat {
+  float: left;
+  margin-left: 20px;
+}
+
+#chatWindow, #activityLog, #myCards {
+  width: 100%;
+  height: 156px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  overflow-y: scroll;
+  border: 1px solid green;
+  box-sizing: border-box;
+}
+
+#chatInput {
+  width: 100%;
+  height: 28px;
+}
+
+#note {
+  width: 225px;
+  height: 605px;
+  border: 1px solid green;
+  margin-left: 5px;
+}
+
+#gameInfo {
+  width: 300px;
+  height: 605px;
+  padding: 0;
+}
+
+#firstRow {
+  width: 300px;
+}
+
+.info {
+  height: 96px;
+  width: 96px;
+  border: 1px solid green;
+  margin: 2px 2px 2px 2px;
+  float: left; 
+}
+/* End gamearea */
