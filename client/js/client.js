@@ -5,7 +5,12 @@ var gameboard = null;
 var chatForm = document.getElementById('chatForm');
 var chatInput = document.getElementById('chatInput');
 var myCards = document.getElementById('myCards');
-var myCharacter = document.getElementById('myPlayer');
+var myCharacter = document.getElementById('myPlayer');var suggestionModal = document.getElementById('suggestionModal');
+var suspect = document.getElementById('suspect');
+var weapon = document.getElementById('weapon');
+var room = document.getElementById('room');
+var suggestion = document.getElementById('suggestion');
+var inactivePlayers = {};
 
 // Suspect Deck
 var suspectDeck = new Deck();
@@ -116,6 +121,7 @@ function main() {
         socket.on('gameReady', function(data) {
         	document.getElementById('startBtn').disabled = false;
         	myPlayer = new Player(playerInfo.id, playerInfo.name, playerInfo.character, playerInfo.position);
+        	myPlayer.isActive = true;
         });
 
 
@@ -123,10 +129,13 @@ function main() {
         	document.getElementById('lobby').style.display = 'none';
         	document.getElementById('gamearea').style.display = 'inline-block';
         	myCharacter.innerHTML = myPlayer.character;
-        	myPlayer.hand = data;
+        	myPlayer.hand = data[0];
+        	for(var name in data[1]) {
+                inactivePlayers[name] = new Player(0, "", name, data[1][name].position);
+            }
         	var html = "";
-        	for(var i = 0; i < data.length; i++) {
-        		html += "<div>" + data[i].name + "</div>";
+        	for(var i = 0; i < data[0].length; i++) {
+        		html += "<div>" + data[0][i].name + "</div>";
         	}
         	myCards.innerHTML = html;
         	gameboard = new Board(imageSrc);
@@ -140,7 +149,6 @@ function main() {
 
         socket.on('move', function(data) {
         	gameboard.positions = data[0];
-        	console.log(gameboard.positions[data[1]][data[2]].room + data[3]);
         	document.getElementById(gameboard.positions[data[1]][data[2]].room + data[3]).src = "";
         	gameboard.placeCharacters();
         });
@@ -268,17 +276,35 @@ function setupGame(playerNum) {
 }
 
 function movePlayer(dir) {
-	var newPosition = myPlayer.move(dir);
-	var isvalid = gameboard.checkPosition(newPosition, myPlayer.character);
+	var newPosition = [], isvalid = [], msg = 'Invalid move';
+	if (dir === 'secret') {
+		if (gameboard.secretPassage(myPlayer.position)) {
+			newPosition = myPlayer.moveThruPassage();
+			isvalid = gameboard.checkPosition(newPosition, myPlayer.character);
+		} else {
+			msg = 'There is no secret passage in this room';
+		}
+	} else {
+		newPosition = myPlayer.move(dir);
+		isvalid = gameboard.checkPosition(newPosition, myPlayer.character);
+	}
 	if (isvalid[0]) {
 		var row = isvalid[1][0];
 		var col = isvalid[1][1];
 		var pos = isvalid[1][2].toString();
 		myPlayer.position = newPosition;
-		console.log(pos);
 		document.getElementById(gameboard.positions[row][col].room + pos).src = "";
 		socket.emit('newPosition', [gameboard.positions, row,  col, pos]);
 	} else {
-		alert('Invalid move');
+		alert(msg);
 	}
+}
+
+function makeSuggestion(){
+	suggestionModal.style.display = 'block';
+}
+
+function getSuggestion() {
+	suggestionModal.style.display = 'none';
+	document.getElementById('suggestion').disabled = true;
 }

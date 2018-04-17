@@ -19,8 +19,27 @@ Player.prototype.move = function(direction) {
 		newPos[0]--;
 	} else if (direction === 'down') {
 		newPos[0]++;
-	} else if (direction === 'secret') {
+	}
+	return newPos;
+};
 
+Player.prototype.moveThruPassage = function() {
+	var newPos = [];
+	if (this.position[0] === 0 &&
+		this.position[1] === 0) {
+		newPos = [4, 4];
+	} 
+	else if (this.position[0] === 0 &&
+			 this.position[1] === 4) {
+		newPos = [4, 0];
+	} 
+	else if (this.position[0] === 4 &&
+			 this.position[1] === 0) {
+		newPos = [0, 4];
+	} 
+	else if (this.position[0] === 4 &&
+			 this.position[1] === 4) {
+		newPos = [0, 0];
 	}
 	return newPos;
 };

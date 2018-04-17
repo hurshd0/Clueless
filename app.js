@@ -70,7 +70,7 @@ io.on('connection', function(client) {
 		for(var i = 0; i < PLAYER_LIST.length; i++) {
 			var id = PLAYER_LIST[i];
 			var player = CLIENT_LIST[id];
-			player.emit('drawboard', data[i]);
+			player.emit('drawboard', [data[i], players]);
 		}
 	});
 

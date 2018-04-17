@@ -172,6 +172,40 @@
 							<img src="" class="pos5" id="kitchen5">
 							<img src="" class="pos6" id="kitchen6">
 						</div>
+
+						<div class="btn-toolbar" role="toolbar" aria-label="..." id="buttons">
+				    		<div class="btn-group" role="group" aria-label="...">
+				        		<button type="button" class="btn btn-primary">
+				            		<span class="glyphicon glyphicon-arrow-left" aria-hidden="true" onclick="movePlayer('left')"></span>
+				        		</button>
+				        		<button type="button" class="btn btn-primary">
+				            		<span class="glyphicon glyphicon-arrow-right" aria-hidden="true" onclick="movePlayer('right')"></span>
+				        		</button>
+				        		<button type="button" class="btn btn-primary">
+				            		<span class="glyphicon glyphicon-arrow-up" aria-hidden="true" onclick="movePlayer('up')"></span>
+				        		</button>
+				        		<button type="button" class="btn btn-primary">
+				            		<span class="glyphicon glyphicon-arrow-down" aria-hidden="true" onclick="movePlayer('down')"></span>
+				        		</button>
+				    		</div>
+
+				    		<div class="btn-group" role="group" aria-label="..." >
+				        		<button type="button" class="btn btn-info" onclick="movePlayer('secret')">Secret Passage</button>
+				    		</div>
+
+				    		<div class="btn-group" role="group" aria-label="...">
+				        		<button type="button" class="btn btn-info" onclick="makeSuggestion()" id="suggestion">Suggestion</button>
+				    		</div>
+
+				    		<div class="btn-group" role="group" aria-label="...">
+				        		<button type="button" class="btn btn-danger" onclick="makeAccusation()" disabled>Accusation</button>
+				    		</div>
+
+				    		<div class="btn-group" role="group" aria-label="...">
+				        		<button type="button" class="btn btn-warning">End Turn</button>
+				    		</div>
+						</div>
+
 					</div>
 
 					<div class="col-md-3" id="gameInfo">
@@ -192,7 +226,47 @@
 
 					<div class="col-md-3" id="note">
 						
-					</div>		
+					</div>	
+				</div>
+
+				<div id="suggestionModal" class="modal">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4>Choose an option from each dropdown</h4>
+						</div>
+						<div class="modal-body">
+							<select id="suspect">
+								<option value="Miss Scarlet">Miss Scarlet</option>
+								<option value="Professor Plum">Professor Plum</option>
+								<option value="Colonel Mustard">Colonel Mustard</option>
+								<option value="Mrs Peacock">Mrs Peacock</option>
+								<option value="Mr Green">Mr Green</option>
+								<option value="Mrs White">Mrs White</option>
+							</select>
+
+							<select id="weapon">
+								<option value="Rope">Rope</option>
+								<option value="Lead Pipe">Lead Pipe</option>
+								<option value="Knife">Knife</option>
+								<option value="Wrench">Wrench</option>
+								<option value="Candlestick">Candlestick</option>
+								<option value="Revolver">Revolver</option>
+							</select>
+
+							<select id="room">
+								<option value="Study">Study</option>
+								<option value="Hall">Hall</option>
+								<option value="Lounge">Lounge</option>
+								<option value="Library">Library</option>
+								<option value="Billiard Room">Billiard Room</option>
+								<option value="Dining Room">Dining Room</option>
+								<option value="Conservatory">Conservatory</option>
+								<option value="Ballroom">Ballroom</option>
+								<option value="Kitchen">Kitchen</option>
+							</select>
+							<button type="button" onclick="getSuggestion()">Submit</button>
+						</div>
+					</div>
 				</div>
 			</div>
 			<!-- End Game Area -->

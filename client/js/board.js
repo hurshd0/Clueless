@@ -40,9 +40,17 @@ function Board(images) {
 }
 
 Board.prototype.checkPosition = function(pos, name) {
-    var row = pos[0];
-    var col = pos[1];
     var oldPos = [];
+    var row, col;
+    if (Array.isArray(pos)) {
+        row = pos[0];
+        col = pos[1];
+    }
+    else {
+        var newPos = this.getRomPosition(pos);
+        row = newPos[0];
+        col = newPos[1];
+    }
     if (row >= 0 && row < 5 && col >= 0 && col < 5
         && this.positions[row][col].room !== null) {
         for(var i = 0; i < this.positions.length; i++) {
@@ -64,6 +72,43 @@ Board.prototype.checkPosition = function(pos, name) {
         }
     } else {
         return [false, oldPos];
+    }
+};
+
+Board.prototype.getRomPosition = function(name) {
+    if (name === 'Study') {
+        return [0, 0];
+    } else if (name === 'Hall') {
+        return [0, 2];
+    } else if (name === 'Lounge') {
+        return [0, 4];
+    } else if (name === 'Library') {
+        return [2, 0];
+    } else if (name === 'Billiard Room') {
+        return [2, 2];
+    } else if (name === 'Dining Room') {
+        return [2, 4];
+    } else if (name === 'Conservatory') {
+        return [4, 0];
+    } else if (name === 'Ballroom') {
+        return [4, 2];
+    } else if (name === 'Kitchen') {
+        return [4, 4];
+    }
+};
+
+// Returns true if there is a secret passage
+// at the position provided otherwise it returns false
+Board.prototype.secretPassage = function(pos) {
+    var row = pos[0];
+    var col = pos[1];
+    if ((row === 0 && col === 0) ||
+        (row === 0 && col === 4) ||
+        (row === 4 && col === 0) ||
+        (row === 4 && col === 4)) {
+        return true;
+    } else {
+        return false;
     }
 };
 
