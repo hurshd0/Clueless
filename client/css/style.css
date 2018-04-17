@@ -90,12 +90,14 @@ div {
   width: 16%;
   height: 100px;
   background-color: grey;
+  padding-top: 35px;
 }
 
 .eighteen {
   width: 18%;
   height: 100px;
   background-color: grey;
+  padding-top: 35px;
 }
 
 .quarter {
@@ -166,25 +168,13 @@ div.float {
   background-color: green;
 }
 
-.pos1 {
-  position: relative;
-  left: 30px;
-  top: 30px;
-}
-
-.pos2 {
-  margin: 10px auto;
-}
-
-.pos3{
+.pos7 {
   margin: 71.25px auto;
   margin-top: 71.25px;
 }
 
-.pos4 {
-  position: relative;
-  left: 60px;
-  top: 50px;
+.pos8 {
+  margin: 10px auto;
 }
 
 .chat {

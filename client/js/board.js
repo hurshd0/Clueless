@@ -2,39 +2,39 @@ function Board(images) {
     this.images = images;
     this.positions = [
         [
-            {"room": "study", "character1": "", "character2": ""}, 
-            {"room": "SH", "character1": "", "character2": null}, 
-            {"room": "hall", "character1": "", "character2": ""}, 
-            {"room": "HL", "character1": "Miss Scarlet", "character2": null}, 
-            {"room": "lounge", "character1": "", "character2": ""}
+            {"room": "study", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "SH", "characters": [""]}, 
+            {"room": "hall", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "HL", "characters": ["Miss Scarlet"]}, 
+            {"room": "lounge", "characters": ["", "", "", "", "", ""]}
         ],
         [
-            {"room": "SL", "character1": "Professor Plum", "character2": null}, 
-            {"room": null, "character1": null, "character2": null}, 
-            {"room": "HB", "character1": "", "character2": null}, 
-            {"room": null, "character1": null, "character2": null}, 
-            {"room": "LD", "character1": "Colonel Mustard", "character2": null}
+            {"room": "SL", "characters": ["Professor Plum"]}, 
+            {"room": null, "characters": []}, 
+            {"room": "HB", "characters": [""]}, 
+            {"room": null, "characters": []}, 
+            {"room": "LD", "characters": ["Colonel Mustard"]}
         ],
         [
-            {"room": "library", "character1": "", "character2": ""}, 
-            {"room": "LB", "character1": "", "character2": null}, 
-            {"room": "billiard", "character1": "", "character2": ""}, 
-            {"room": "BD", "character1": "", "character2": null}, 
-            {"room": "dining", "character1": "", "character2": ""}
+            {"room": "library", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "LB", "characters": [""]}, 
+            {"room": "billiard", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "BD", "characters": [""]}, 
+            {"room": "dining", "characters": ["", "", "", "", "", ""]}
         ],
         [
-            {"room": "LC", "character1": "Mrs Peacock", "character2": null}, 
-            {"room": null, "character1": null, "character2": null}, 
-            {"room": "BB", "character1": "", "character2": null}, 
-            {"room": null, "character1": null, "character2": null}, 
-            {"room": "DK", "character1": "", "character2": null}
+            {"room": "LC", "characters": ["Mrs Peacock"]}, 
+            {"room": null, "characters": []}, 
+            {"room": "BB", "characters": [""]}, 
+            {"room": null, "characters": []}, 
+            {"room": "DK", "characters": [""]}
         ],
         [
-            {"room": "conservatory", "character1": "", "character2": ""}, 
-            {"room": "CB", "character1": "Mr Green", "character2": null}, 
-            {"room": "ballroom", "character1": "", "character2": ""}, 
-            {"room": "BK", "character1": "Mrs White", "character2": null}, 
-            {"room": "kitchen", "character1": "", "character2": ""}
+            {"room": "conservatory", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "CB", "characters": ["Mr Green"]}, 
+            {"room": "ballroom", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "BK", "characters": ["Mrs White"]}, 
+            {"room": "kitchen", "characters": ["", "", "", "", "", ""]}
         ]
     ];
 }
@@ -44,14 +44,21 @@ Board.prototype.checkPosition = function(pos, name) {
     var col = pos[1];
     var oldPos = [];
     if (row >= 0 && row < 5 && col >= 0 && col < 5
-        && this.positions[row][col].character1 === "") {
+        && this.positions[row][col].room !== null) {
         for(var i = 0; i < this.positions.length; i++) {
             for(var j = 0; j < this.positions[i].length; j++) {
-                if (this.positions[i][j].character1 === name) {
-                    oldPos = [i, j];
-                    this.positions[i][j].character1 = "";
-                    this.positions[row][col].character1 = name;
-                    return [true, oldPos];
+                var myarr = this.positions[i][j].characters;
+                if(myarr.includes(name)) {
+                    for(var k = 0; k < this.positions[row][col].characters.length; k++) {
+                        if (this.positions[row][col].characters[k] === "") {
+                            oldPos = [i, j];
+                            oldPos.push(myarr.indexOf(name) + 1);
+                            myarr.splice(myarr.indexOf(name), 1, '');
+                            this.positions[row][col].characters[k] = name;
+                            return [true, oldPos];
+                        }
+                    }
+                    return [false, oldPos];
                 }
             }
         }
@@ -84,17 +91,16 @@ Board.prototype.selectCharacter = function(name) {
 };
 
 Board.prototype.placeCharacters = function() {
+    var img;
     for (var i = 0; i < this.positions.length; i++) {
         for (var j = 0; j < this.positions[i].length; j++) {
             var temp = this.positions[i][j];
             if(temp.room != null) {
-                if(temp.character1 != null && temp.character1 != "") {
-                    img = this.selectCharacter(temp.character1);
-                    document.getElementById(temp.room + "1").src = img;
-                }
-                if(temp.character2 != null && temp.character2 != "") {
-                    img = this.selectCharacter(temp.character2 + "2");
-                    document.getElementById(temp.room).src = img;
+                for(var k = 0; k < temp.characters.length; k++) {
+                    if (temp.characters[k] !== "") {
+                        img = this.selectCharacter(temp.characters[k]);
+                        document.getElementById(temp.room + (k + 1).toString()).src = img;
+                    }
                 }
             }
         }

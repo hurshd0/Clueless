@@ -140,18 +140,19 @@ function main() {
 
         socket.on('move', function(data) {
         	gameboard.positions = data[0];
-        	document.getElementById(gameboard.positions[data[1]][data[2]].room + "1").src = "";
+        	console.log(gameboard.positions[data[1]][data[2]].room + data[3]);
+        	document.getElementById(gameboard.positions[data[1]][data[2]].room + data[3]).src = "";
         	gameboard.placeCharacters();
         });
 
         document.onkeydown = function(event) {
-			if(event.keyCode === 68) {			//d
+			if(event.keyCode === 39) {			// right arrow
 				movePlayer("right");
-			} else if(event.keyCode === 83) {  //s
+			} else if(event.keyCode === 40) {  // down arrow
 				movePlayer("down");
-			} else if(event.keyCode === 65) {  //a
+			} else if(event.keyCode === 37) {  // left arrow
 				movePlayer("left");
-			} else if(event.keyCode === 87) {  //w
+			} else if(event.keyCode === 38) {  // up arrow
 				movePlayer("up");
 			}
 		}
@@ -272,9 +273,11 @@ function movePlayer(dir) {
 	if (isvalid[0]) {
 		var row = isvalid[1][0];
 		var col = isvalid[1][1];
+		var pos = isvalid[1][2].toString();
 		myPlayer.position = newPosition;
-		document.getElementById(gameboard.positions[row][col].room + "1").src = "";
-		socket.emit('newPosition', [gameboard.positions, row,  col]);
+		console.log(pos);
+		document.getElementById(gameboard.positions[row][col].room + pos).src = "";
+		socket.emit('newPosition', [gameboard.positions, row,  col, pos]);
 	} else {
 		alert('Invalid move');
 	}
