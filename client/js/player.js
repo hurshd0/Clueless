@@ -6,7 +6,9 @@ function Player(id, name, character, position) {
     this.hand = [];
     this.isTurn = false;
     this.isActive = false;
-    this.canMove = false;
+    this.lastRoom = "";
+    this.suggest = false;
+    this.hasSuggested = false;
 }
 
 Player.prototype.move = function(direction) {

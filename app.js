@@ -85,14 +85,31 @@ io.on('connection', function(client) {
 	client.on('suggest', function(data) {
 		if(data[0].board) {
 			client.broadcast.emit('suggestion', {"suggestion": data, "name": client.character});
+			var arr = getOthers(client.id);
+			for(var i = 0; i < arr.length; i++) {
+				CLIENT_LIST[arr[i]].emit('prove');
+			}
 		} else {
-			var player = findClient(data.suspect);
+			var player = findClient(data[0].suspect);
 			player.emit('beMoved', {"suggestion": data, "name": client.character});
 		}
 	});
 
 	client.on('moved', function(data) {
 		client.broadcast.emit('suggestion', data);
+		var arr = getOthers(PLAYER_LIST[currentTurn]);
+		for(var i = 0; i < arr.length; i++) {
+			CLIENT_LIST[arr[i]].emit('prove');
+		}
+	});
+
+	client.on('sendProof', function(data) {
+		CLIENT_LIST[PLAYER_LIST[currentTurn]].emit('proven', {"proof": data, "name": client.character});
+	});
+
+	client.on('nextTurn', function(data) {
+		var id = setTurn();
+		CLIENT_LIST[id].emit('startTurn');
 	});
 });
 
@@ -136,4 +153,14 @@ function setTurn() {
 		currentTurn = (currentTurn + 1) % PLAYER_LIST.length;
 		return PLAYER_LIST[currentTurn];
 	}
+}
+
+function getOthers(id) {
+	var arr = [];
+	for(var i = 0; i < PLAYER_LIST.length; i++) {
+		if (PLAYER_LIST[i] !== id) {
+			arr.push(PLAYER_LIST[i]);
+		}
+	}
+	return arr;
 }

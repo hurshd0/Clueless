@@ -47,7 +47,7 @@ Board.prototype.checkPosition = function(pos, name) {
         col = pos[1];
     }
     else {
-        var newPos = this.getRomPosition(pos);
+        var newPos = this.getRoomPosition(pos);
         row = newPos[0];
         col = newPos[1];
     }
@@ -75,7 +75,7 @@ Board.prototype.checkPosition = function(pos, name) {
     }
 };
 
-Board.prototype.getRomPosition = function(name) {
+Board.prototype.getRoomPosition = function(name) {
     if (name === 'Study') {
         return [0, 0];
     } else if (name === 'Hall') {
@@ -140,6 +140,8 @@ Board.prototype.getRoomName = function(pos) {
         return'Ballroom';
     } else if (pos[0] === 4 && pos[1] === 4) {
         return 'Kitchen';
+    } else {
+        return 'Hallway';
     }
 };
 
