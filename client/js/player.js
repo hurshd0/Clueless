@@ -6,6 +6,7 @@ function Player(id, name, character, position) {
     this.hand = [];
     this.isTurn = false;
     this.isActive = false;
+    this.canMove = false;
 }
 
 Player.prototype.move = function(direction) {

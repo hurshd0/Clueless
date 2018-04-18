@@ -94,6 +94,52 @@ Board.prototype.getRomPosition = function(name) {
         return [4, 2];
     } else if (name === 'Kitchen') {
         return [4, 4];
+    } else if (name === 'SH') {
+        return [0, 1];
+    } else if (name === 'HL') {
+        return [0, 3];
+    } else if (name === 'SL') {
+        return [1, 0];
+    } else if (name === 'HB') {
+        return [1, 2];
+    } else if (name === 'LD') {
+        return [1, 4];
+    } else if (name === 'LB') {
+        return [2, 1];
+    } else if (name === 'BD') {
+        return [2, 3];
+    } else if (name === 'LC') {
+        return [3, 0];
+    } else if (name === 'BB') {
+        return [3, 2];
+    } else if (name === 'DK') {
+        return [3, 4];
+    } else if (name === 'CB') {
+        return [4, 1];
+    } else if (name === 'BK') {
+        return [4, 3];
+    }
+};
+
+Board.prototype.getRoomName = function(pos) {
+    if (pos[0] === 0 && pos[1] === 0) {
+        return 'Study';
+    } else if(pos[0] === 0 && pos[1] === 2) {
+        return 'Hall';
+    } else if (pos[0] === 0 && pos[1] === 4) {
+        return 'Lounge';
+    } else if (pos[0] === 2 && pos[1] === 0) {
+        return 'Library';
+    } else if (pos[0] === 2 && pos[1] === 2) {
+        return 'Billiard Room';
+    } else if (pos[0] === 2 && pos[1] === 4) {
+        return 'Dining Room';
+    } else if (pos[0] === 4 && pos[1] === 0) {
+        return 'Conservatory';
+    } else if (pos[0] === 4 && pos[1] === 2) {
+        return'Ballroom';
+    } else if (pos[0] === 4 && pos[1] === 4) {
+        return 'Kitchen';
     }
 };
 

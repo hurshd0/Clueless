@@ -21,6 +21,8 @@ var players = {"Miss Scarlet": {"id": 0, "position": [0, 3]},
 			"Mrs White": {"id": 5, "position": [4, 3]}};
 var names = [];
 var secretEnvelope = null;
+var currentTurn = null;
+var lastTurn = null;
 
 var io = require('socket.io')(server, {});
 io.on('connection', function(client) {
@@ -72,10 +74,25 @@ io.on('connection', function(client) {
 			var player = CLIENT_LIST[id];
 			player.emit('drawboard', [data[i], players]);
 		}
+		var id = setTurn();
+		CLIENT_LIST[id].emit('startTurn');
 	});
 
 	client.on('newPosition', function(data) {
 		client.broadcast.emit('move', data);
+	});
+
+	client.on('suggest', function(data) {
+		if(data[0].board) {
+			client.broadcast.emit('suggestion', {"suggestion": data, "name": client.character});
+		} else {
+			var player = findClient(data.suspect);
+			player.emit('beMoved', {"suggestion": data, "name": client.character});
+		}
+	});
+
+	client.on('moved', function(data) {
+		client.broadcast.emit('suggestion', data);
 	});
 });
 
@@ -99,5 +116,24 @@ function gameReady() {
 		return true;
 	} else {
 		return false;
+	}
+}
+
+function findClient(character) {
+    for(var client in CLIENT_LIST) {
+        if (CLIENT_LIST[client].character === character) {
+            return CLIENT_LIST[client];
+        }
+    }
+}
+
+function setTurn() {
+	if(currentTurn === null) {
+		currentTurn = 0;
+		return PLAYER_LIST[currentTurn];
+	} else {
+		lastTurn = currentTurn;
+		currentTurn = (currentTurn + 1) % PLAYER_LIST.length;
+		return PLAYER_LIST[currentTurn];
 	}
 }

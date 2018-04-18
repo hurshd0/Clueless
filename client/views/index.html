@@ -194,11 +194,11 @@
 				    		</div>
 
 				    		<div class="btn-group" role="group" aria-label="...">
-				        		<button type="button" class="btn btn-info" onclick="makeSuggestion()" id="suggestion">Suggestion</button>
+				        		<button type="button" class="btn btn-info" onclick="makeSuggestion()" id="suggestion" disabled>Suggestion</button>
 				    		</div>
 
 				    		<div class="btn-group" role="group" aria-label="...">
-				        		<button type="button" class="btn btn-danger" onclick="makeAccusation()" disabled>Accusation</button>
+				        		<button type="button" class="btn btn-danger" onclick="makeAccusation()" id="accusation" disabled>Accusation</button>
 				    		</div>
 
 				    		<div class="btn-group" role="group" aria-label="...">
@@ -254,7 +254,7 @@
 							</select>
 
 							<select id="room">
-								<option value="Study">Study</option>
+								<!-- <option value="Study">Study</option>
 								<option value="Hall">Hall</option>
 								<option value="Lounge">Lounge</option>
 								<option value="Library">Library</option>
@@ -262,7 +262,7 @@
 								<option value="Dining Room">Dining Room</option>
 								<option value="Conservatory">Conservatory</option>
 								<option value="Ballroom">Ballroom</option>
-								<option value="Kitchen">Kitchen</option>
+								<option value="Kitchen">Kitchen</option> -->
 							</select>
 							<button type="button" onclick="getSuggestion()">Submit</button>
 						</div>
