@@ -5,7 +5,8 @@ var gameboard = null;
 var chatForm = document.getElementById('chatForm');
 var chatInput = document.getElementById('chatInput');
 var myCards = document.getElementById('myCards');
-var myCharacter = document.getElementById('myPlayer');var suggestionModal = document.getElementById('suggestionModal');
+var myCharacter = document.getElementById('myPlayer');
+var suggestionModal = document.getElementById('suggestionModal');
 var suspect = document.getElementById('suspect');
 var weapon = document.getElementById('weapon');
 var room = document.getElementById('room');
@@ -157,7 +158,6 @@ function main() {
         socket.on('suggestion', function(data) {
         	gameboard.positions = data.suggestion[0].board;
         	if (data.suggestion.length > 1) {
-        		console.log(data);
         		var row = data.suggestion[1];
 	        	var col = data.suggestion[2];
 	        	var pos = data.suggestion[3];
@@ -178,7 +178,6 @@ function main() {
         		data.suggestion.push(isvalid[1][2].toString());
         	}
         	data.suggestion[0].board = gameboard.positions;
-        	console.log(data);
         	socket.emit('moved', data);
         });
 
@@ -417,6 +416,7 @@ function getProof() {
 	for(var i = 0; i < myPlayer.hand.length; i++) {
 		if (myPlayer.hand[i].name === proof) {
 			socket.emit('sendProof', proof);
+			break;
 		}
 	}
 }

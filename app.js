@@ -22,7 +22,6 @@ var players = {"Miss Scarlet": {"id": 0, "position": [0, 3]},
 var names = [];
 var secretEnvelope = null;
 var currentTurn = null;
-var lastTurn = null;
 
 var io = require('socket.io')(server, {});
 io.on('connection', function(client) {
