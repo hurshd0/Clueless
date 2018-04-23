@@ -9,6 +9,7 @@ function Player(id, name, character, position) {
     this.lastRoom = "";
     this.suggest = false;
     this.hasSuggested = false;
+    this.wasMoved = false;
 }
 
 Player.prototype.move = function(direction) {
@@ -45,6 +46,14 @@ Player.prototype.moveThruPassage = function() {
 		newPos = [0, 0];
 	}
 	return newPos;
+};
+
+Player.prototype.cardNames = function() {
+	var names = [];
+	for(var i = 0; i < this.hand.length; i++) {
+		names.push(this.hand[i].name);
+	}
+	return names;
 };
 
 // Player.prototype.suggest = function() {

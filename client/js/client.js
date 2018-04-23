@@ -13,6 +13,7 @@ var room = document.getElementById('room');
 var suggestion = document.getElementById('suggestion');
 var inactivePlayers = {};
 var currSuggestion = null;
+var names = null;
 
 // Suspect Deck
 var suspectDeck = new Deck();
@@ -132,6 +133,7 @@ function main() {
         	document.getElementById('gamearea').style.display = 'inline-block';
         	myCharacter.innerHTML = myPlayer.character;
         	myPlayer.hand = data[0];
+        	names = myPlayer.cardNames();
         	for(var name in data[1]) {
                 inactivePlayers[name] = new Player(0, "", name, data[1][name].position);
             }
@@ -176,6 +178,7 @@ function main() {
         		data.suggestion.push(isvalid[1][0]);
         		data.suggestion.push(isvalid[1][1]);
         		data.suggestion.push(isvalid[1][2].toString());
+        		myPlayer.wasMoved = true;
         	}
         	data.suggestion[0].board = gameboard.positions;
         	socket.emit('moved', data);
@@ -183,11 +186,29 @@ function main() {
 
         socket.on('startTurn', function(data) {
         	myPlayer.isTurn = true;
+        	alert('It is your turn');
+        	document.getElementById('endTurnBtn').disabled = false;
+
+        	if (myPlayer.wasMoved) {
+                alert('You can either move to a new room or make a suggestion or accusation now');
+                document.getElementById('suggestion').disabled = false;
+                document.getElementById('accusation').disabled = false;
+            }
         });
 
         socket.on('prove', function(data) {
-        	document.getElementById('proveBtn').disabled = false;
-        	alert('You can now prove the suggestion false');
+        	var proofCount = 0;
+        	for(var i = 0; i < currSuggestion.length; i++) {
+        		if (names.includes(currSuggestion[i])) {
+        			proofCount++;
+        			document.getElementById('proveBtn').disabled = false;
+        			alert('You can now prove the suggestion false');
+        			break;
+        		}
+        	}
+        	if (proofCount === 0) {
+        		socket.emit('nextChallenger');
+        	}
         });
 
         socket.on('proven', function(data) {
@@ -197,8 +218,35 @@ function main() {
    	 		myPlayer.isTurn = false;
    	 		myPlayer.hasSuggested = false;
    	 		myPlayer.suggest = false;
+            alert('Your turn has ended');
+            // Alert server to switch turn
         	socket.emit('nextTurn');
         });
+
+        socket.on('notProven', function(data) {
+            alert('Your suggestion could not be proven by any players. You can end your turn or make an accusation now');
+            document.getElementById('accusation').disabled = false;
+            document.getElementById('endTurnBtn').disabled = false;
+        });
+
+        socket.on('receiveMessage', function(data){
+            document.getElementById('chatWindow').innerHTML += "<div>" + new Date().toLocaleTimeString() + ": " + data.player + ": " + data.message + "</div>";
+        });
+
+        // For debugging server
+		socket.on('evalAns', function(data) {
+			console.log(data);
+		});
+
+		chatForm.onsubmit = function(e) {
+			e.preventDefault();
+			if(chatInput.value[0] === '/') {	// For debugging server side
+				socket.emit('evalServer', chatInput.value.slice(1));;
+			} else {
+				socket.emit('sendMessage', {player: myPlayer.character, message: chatInput.value});
+			}
+			chatInput.value = '';
+		}
 
         document.onkeydown = function(event) {
 			if(event.keyCode === 39) {			// right arrow
@@ -307,7 +355,7 @@ function setupGame(playerNum) {
 	clueDeck.add_card(weaponDeck.not_dealt());
 	clueDeck.add_card(roomDeck.not_dealt());
 	clueDeck.shuffle();
-	var cardCount = clueDeck.cards.length / playerNum;
+	var cardCount = Math.floor(clueDeck.cards.length / playerNum);
 	var leftOver = clueDeck.cards.length % playerNum;
 	for(var i = 0; i < playerNum; i++) {
 		response[i] = clueDeck.deal_cards(cardCount);
@@ -315,7 +363,8 @@ function setupGame(playerNum) {
 
 	if (leftOver > 0) {
 		for(var i = 0; i < leftOver; i++) {
-			response[i].concat(clueDeck.deal_cards(1));
+			var thisCard = clueDeck.deal_cards(1);
+            response[i].push(thisCard[0]);
 		}
 	}
 
@@ -323,7 +372,7 @@ function setupGame(playerNum) {
 }
 
 function movePlayer(dir) {
-	var newPosition = [], isvalid = [], msg = 'Invalid move';
+	var newPosition, isvalid = [], msg = '';
 	if (!myPlayer.isActive) {
 		alert("You may no longer move in the game");
 	} else if (!myPlayer.isTurn) {
@@ -334,45 +383,50 @@ function movePlayer(dir) {
 			if (gameboard.secretPassage(myPlayer.position)) {
 				newPosition = myPlayer.moveThruPassage();
 			} else {
+				console.log('No secret passage')
 				msg = 'There is no secret passage in this room';
 			}
 		} else {
 			newPosition = myPlayer.move(dir);
 		}
 
-		// Stops player from reentering the same room in one turn
-		if (myPlayer.lastRoom === gameboard.getRoomName(newPosition)) {
-			alert('You cannot move to the same room in one turn');
-		} else if (myPlayer.hasSuggested) {
-			alert('Wait for other players to react to suggestion/accusation');
-		} 
-		else if (myPlayer.suggest) {
-			alert('You must make a suggestion or accusation now');
-		} else {
-			isvalid = gameboard.checkPosition(newPosition, myPlayer.character);
-			if (isvalid[0]) {
-				var row = isvalid[1][0];
-				var col = isvalid[1][1];
-				var pos = isvalid[1][2].toString();
-				var name = gameboard.getRoomName(newPosition);
-				if (name !== 'Hallway') {
-					myPlayer.lastRoom = name;
-					myPlayer.suggest = true;
-        			document.getElementById('suggestion').disabled = false;
-        			document.getElementById('accusation').disabled = false;
-				}
-				myPlayer.position = newPosition;
-				document.getElementById(gameboard.positions[row][col].room + pos).src = "";
-				socket.emit('newPosition', [gameboard.positions, row,  col, pos]);
+		if(newPosition) {
+			// Stops player from reentering the same room in one turn
+			if (myPlayer.lastRoom === gameboard.getRoomName(newPosition)) {
+				alert('You cannot move to the same room in one turn');
+			} else if (myPlayer.hasSuggested) {
+				alert('Wait for other players to react to suggestion/accusation');
+			} 
+			else if (myPlayer.suggest) {
+				alert('You must make a suggestion or accusation now');
 			} else {
-				alert(msg);
+				isvalid = gameboard.checkPosition(newPosition, myPlayer.character);
+				if (isvalid[0]) {
+					var row = isvalid[1][0];
+					var col = isvalid[1][1];
+					var pos = isvalid[1][2].toString();
+					var name = gameboard.getRoomName(newPosition);
+					if (name !== 'Hallway') {
+						myPlayer.lastRoom = name;
+						myPlayer.suggest = true;
+	        			document.getElementById('suggestion').disabled = false;
+	        			document.getElementById('accusation').disabled = false;
+	        			document.getElementById('endTurnBtn').disabled = true;
+					}
+					myPlayer.position = newPosition;
+					document.getElementById(gameboard.positions[row][col].room + pos).src = "";
+					socket.emit('newPosition', [gameboard.positions, row,  col, pos]);
+				} 
 			}
+		} else {
+			alert(msg);
 		}
 	}
 }
 
 function makeSuggestion() {
 	suggestionModal.style.display = 'block';
+    myPlayer.wasMoved = false;
 	var currRoom = gameboard.getRoomName(myPlayer.position);
 	room.innerHTML = "<option value='" + currRoom + "'>" + currRoom + "</option>";
 }
@@ -404,7 +458,9 @@ function prove() {
 	document.getElementById('proofModal').style.display = 'block';
 	var html = "";
 	for(var i = 0; i < currSuggestion.length; i++) {
-		html += "<option value='" + currSuggestion[i] + "'>" + currSuggestion[i] + "</option>";
+		if (names.includes(currSuggestion[i])) {
+			html += "<option value='" + currSuggestion[i] + "'>" + currSuggestion[i] + "</option>";
+		}
 	}
 	document.getElementById('suggestionContent').innerHTML = html;
 }
@@ -412,11 +468,5 @@ function prove() {
 function getProof() {
 	document.getElementById('proofModal').style.display = 'none'
 	var proof = document.getElementById('suggestionContent').value;
-	// Make sure the player has the card selected
-	for(var i = 0; i < myPlayer.hand.length; i++) {
-		if (myPlayer.hand[i].name === proof) {
-			socket.emit('sendProof', proof);
-			break;
-		}
-	}
+	socket.emit('sendProof', proof);
 }
