@@ -7,9 +7,13 @@ var chatInput = document.getElementById('chatInput');
 var myCards = document.getElementById('myCards');
 var myCharacter = document.getElementById('myPlayer');
 var suggestionModal = document.getElementById('suggestionModal');
-var suspect = document.getElementById('suspect');
-var weapon = document.getElementById('weapon');
-var room = document.getElementById('room');
+var accusationModal = document.getElementById('accusationModal');
+var suspect1 = document.getElementById('suspect1');
+var weapon1 = document.getElementById('weapon1');
+var room1 = document.getElementById('room1');
+var suspect2 = document.getElementById('suspect2');
+var weapon2 = document.getElementById('weapon2');
+var room2 = document.getElementById('room2');
 var suggestion = document.getElementById('suggestion');
 var inactivePlayers = {};
 var currSuggestion = null;
@@ -185,15 +189,19 @@ function main() {
         });
 
         socket.on('startTurn', function(data) {
-        	myPlayer.isTurn = true;
-        	alert('It is your turn');
-        	document.getElementById('endTurnBtn').disabled = false;
+        	if (myPlayer.isActive) {
+        		myPlayer.isTurn = true;
+	        	alert('It is your turn. You can Move to a new room if possible and make a suggestion or end your turn');
+	        	document.getElementById('endTurnBtn').disabled = false;
 
-        	if (myPlayer.wasMoved) {
-                alert('You can either move to a new room or make a suggestion or accusation now');
-                document.getElementById('suggestion').disabled = false;
-                document.getElementById('accusation').disabled = false;
-            }
+	        	if (myPlayer.wasMoved) {
+	                alert('You can either move to a new room or make a suggestion or accusation now');
+	                document.getElementById('suggestion').disabled = false;
+	                document.getElementById('accusation').disabled = false;
+	            }
+        	} else {
+        		socket.emit('nextTurn');
+        	}      	
         });
 
         socket.on('prove', function(data) {
@@ -227,6 +235,35 @@ function main() {
             alert('Your suggestion could not be proven by any players. You can end your turn or make an accusation now');
             document.getElementById('accusation').disabled = false;
             document.getElementById('endTurnBtn').disabled = false;
+        });
+
+        socket.on('accusationResponse', function(data) {
+            var html = "<div>The cards in the secret envelope are: ";
+            for(var i = 0; i < 3; i++) {
+                html += data[1].cards[i].name + ", ";
+            }
+            html += "</div>";
+            document.getElementById('activityLog').innerHTML += html;
+            if (data[0]) {
+                alert('You have solved the mystery');
+                socket.emit('endGame');
+            } else {
+                myPlayer.isActive = false;
+                alert('Your accusation is incorrect');
+                socket.emit('nextTurn');
+            }
+        });
+
+        socket.on('gameOver', function(data) {
+            document.getElementById('activityLog').innerHTML += "<div>" + data[0] + 
+                                        " solved the mystery. The crime was committed by " + data[1].cards[0].name +
+                                        " with a " + data[1].cards[1].name + " in the " + data[1].cards[2].name + "</div>";
+            inactivePlayers = {};
+            playerInfo = {"name": ""};
+            myPlayer = null;
+            gameboard = null;
+            currSuggestion = null;
+            names = null;
         });
 
         socket.on('receiveMessage', function(data){
@@ -372,54 +409,57 @@ function setupGame(playerNum) {
 }
 
 function movePlayer(dir) {
-	var newPosition, isvalid = [], msg = '';
-	if (!myPlayer.isActive) {
-		alert("You may no longer move in the game");
-	} else if (!myPlayer.isTurn) {
-		alert("It is not your turn");
-	} else {
-		// Get the new position to move to
-		if (dir === 'secret') {
-			if (gameboard.secretPassage(myPlayer.position)) {
-				newPosition = myPlayer.moveThruPassage();
-			} else {
-				console.log('No secret passage')
-				msg = 'There is no secret passage in this room';
-			}
+	if (myPlayer !== null) {
+		var newPosition, isvalid = [], msg = '';
+		if (!myPlayer.isActive) {
+			alert("You may no longer move in the game");
+		} else if (!myPlayer.isTurn) {
+			alert("It is not your turn");
 		} else {
-			newPosition = myPlayer.move(dir);
-		}
+			// Get the new position to move to
+			if (dir === 'secret') {
+				if (gameboard.secretPassage(myPlayer.position)) {
+					newPosition = myPlayer.moveThruPassage();
+				} else {
+					msg = 'There is no secret passage in this room';
+				}
+			} else {
+				newPosition = myPlayer.move(dir);
+			}
 
-		if(newPosition) {
-			// Stops player from reentering the same room in one turn
-			if (myPlayer.lastRoom === gameboard.getRoomName(newPosition)) {
-				alert('You cannot move to the same room in one turn');
-			} else if (myPlayer.hasSuggested) {
-				alert('Wait for other players to react to suggestion/accusation');
-			} 
-			else if (myPlayer.suggest) {
-				alert('You must make a suggestion or accusation now');
-			} else {
-				isvalid = gameboard.checkPosition(newPosition, myPlayer.character);
-				if (isvalid[0]) {
-					var row = isvalid[1][0];
-					var col = isvalid[1][1];
-					var pos = isvalid[1][2].toString();
-					var name = gameboard.getRoomName(newPosition);
-					if (name !== 'Hallway') {
-						myPlayer.lastRoom = name;
-						myPlayer.suggest = true;
-	        			document.getElementById('suggestion').disabled = false;
-	        			document.getElementById('accusation').disabled = false;
-	        			document.getElementById('endTurnBtn').disabled = true;
-					}
-					myPlayer.position = newPosition;
-					document.getElementById(gameboard.positions[row][col].room + pos).src = "";
-					socket.emit('newPosition', [gameboard.positions, row,  col, pos]);
+			if(newPosition) {
+				// Stops player from reentering the same room in one turn
+				if (myPlayer.lastRoom === gameboard.getRoomName(newPosition)) {
+					alert('You cannot move to the same room in one turn');
+				} else if (myPlayer.hasSuggested) {
+					alert('Wait for other players to react to suggestion/accusation');
 				} 
+				else if (myPlayer.suggest) {
+					alert('You must make a suggestion or accusation now');
+				} else {
+					isvalid = gameboard.checkPosition(newPosition, myPlayer.character);
+					if (isvalid[0]) {
+						var row = isvalid[1][0];
+						var col = isvalid[1][1];
+						var pos = isvalid[1][2].toString();
+						var name = gameboard.getRoomName(newPosition);
+						if (name !== 'Hallway') {
+							myPlayer.lastRoom = name;
+							myPlayer.suggest = true;
+		        			document.getElementById('suggestion').disabled = false;
+		        			document.getElementById('accusation').disabled = false;
+		        			document.getElementById('endTurnBtn').disabled = true;
+						}
+						myPlayer.position = newPosition;
+						document.getElementById(gameboard.positions[row][col].room + pos).src = "";
+						socket.emit('newPosition', [gameboard.positions, row,  col, pos]);
+					} else {
+						msg = "Hallway blocked or invalid move";
+					}
+				}
+			} else {
+				alert(msg);
 			}
-		} else {
-			alert(msg);
 		}
 	}
 }
@@ -428,7 +468,7 @@ function makeSuggestion() {
 	suggestionModal.style.display = 'block';
     myPlayer.wasMoved = false;
 	var currRoom = gameboard.getRoomName(myPlayer.position);
-	room.innerHTML = "<option value='" + currRoom + "'>" + currRoom + "</option>";
+	room1.innerHTML = "<option value='" + currRoom + "'>" + currRoom + "</option>";
 }
 
 function getSuggestion() {
@@ -438,18 +478,18 @@ function getSuggestion() {
     document.getElementById('accusation').disabled = true;
     myPlayer.hasSuggested = true;
     // Check if the suspect in the suggestion is inactive
-	if (inactivePlayers[suspect.value]) {
-		var target = inactivePlayers[suspect.value];
-		isvalid = gameboard.checkPosition(room.value, target.character);
+	if (inactivePlayers[suspect1.value]) {
+		var target = inactivePlayers[suspect1.value];
+		isvalid = gameboard.checkPosition(room1.value, target.character);
 		var row = isvalid[1][0];
 		var col = isvalid[1][1];
 		var pos = isvalid[1][2].toString();
-		socket.emit('suggest', [{"suspect": suspect.value, "weapon": weapon.value, "room": room.value, "board": gameboard.positions},
+		socket.emit('suggest', [{"suspect": suspect1.value, "weapon": weapon1.value, "room": room1.value, "board": gameboard.positions},
 								row, col, pos]);
-	} else if (suspect.value !== myPlayer.character) { // Check if the suspect in the suggestion is another active player
-		socket.emit('suggest', [{"suspect": suspect.value, "weapon": weapon.value, "room": room.value}]);
+	} else if (suspect1.value !== myPlayer.character) { // Check if the suspect in the suggestion is another active player
+		socket.emit('suggest', [{"suspect": suspect1.value, "weapon": weapon1.value, "room": room1.value}]);
 	} else { // The suspect in the suggestion is the current player
-		socket.emit('suggest', [{"suspect": suspect.value, "weapon": weapon.value, "room": room.value, "board": gameboard.positions}])
+		socket.emit('suggest', [{"suspect": suspect1.value, "weapon": weapon1.value, "room": room1.value, "board": gameboard.positions}])
 	}
 }
 
@@ -469,4 +509,24 @@ function getProof() {
 	document.getElementById('proofModal').style.display = 'none'
 	var proof = document.getElementById('suggestionContent').value;
 	socket.emit('sendProof', proof);
+}
+
+function endTurn() {
+    myPlayer.isTurn = false;
+    document.getElementById('endTurnBtn').disabled = true;
+    alert('Your turn has ended');
+    // Alert server to switch turn
+    socket.emit('nextTurn');
+}
+
+function makeAccusation() {
+    accusationModal.style.display = 'block';
+    myPlayer.wasMoved = false;
+}
+
+function getAccusation() {
+    accusationModal.style.display = 'none';
+    document.getElementById('suggestion').disabled = true;
+    document.getElementById('accusation').disabled = true;
+    socket.emit('accuse', {"suspect": suspect2.value, "weapon": weapon2.value, "room": room2.value});
 }

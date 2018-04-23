@@ -92,7 +92,6 @@ io.on('connection', function(client) {
 		}
 		var id = setTurn();
 		CLIENT_LIST[id].emit('startTurn');
-		challengerCount = 0;
 	});
 
 	client.on('newPosition', function(data) {
@@ -102,9 +101,6 @@ io.on('connection', function(client) {
 	client.on('suggest', function(data) {
 		if(data[0].board) {
 			client.broadcast.emit('suggestion', {"suggestion": data, "name": client.character});
-			// for(var i = 0; i < others.length; i++) {
-			// 	CLIENT_LIST[others[i]].emit('prove');
-			// }
 			var id = setChallenger();
 			CLIENT_LIST[id].emit('prove');
 			challengerCount++;
@@ -116,9 +112,6 @@ io.on('connection', function(client) {
 
 	client.on('moved', function(data) {
 		client.broadcast.emit('suggestion', data);
-		// for(var i = 0; i < others.length; i++) {
-		// 	CLIENT_LIST[others[i]].emit('prove');
-		// }
 		var id = setChallenger();
 		CLIENT_LIST[id].emit('prove');
 		challengerCount++;
@@ -141,8 +134,34 @@ io.on('connection', function(client) {
 	client.on('nextTurn', function(data) {
 		var id = setTurn();
 		CLIENT_LIST[id].emit('startTurn');
-		challengerCount = 0;
+		challengerCount = null;
 	});
+
+	client.on('accuse', function(data) {
+        client.emit('accusationResponse', [checkAccusation(data), secretEnvelope]);
+    });
+
+    // Mark game as ended
+    client.on("endGame", function(data){
+        client.broadcast.emit("gameOver", [client.character, secretEnvelope]);
+        gameStatus = 'Not Started';
+        client.broadcast.emit('gameStatus', gameStatus);
+        // Reset game parameters?
+        players = {"Miss Scarlet": {"id": 0, "position": [0, 3]}, 
+                "Professor Plum": {"id": 1, "position": [1, 0]}, 
+                "Colonel Mustard": {"id": 2, "position": [1, 4]}, 
+                "Mrs Peacock": {"id": 3, "position": [3, 0]}, 
+                "Mr Green": {"id": 4, "position": [4, 1]}, 
+                "Mrs White": {"id": 5, "position": [4, 3]}};
+        PLAYER_LIST = [];
+        names = [];
+        secretEnvelope = null;
+        currentTurn = null;
+        others = null;
+        challenger = null;
+        challengerCount = null;
+        // io = null;
+    });
 
 	client.on('sendMessage', function(data) {
         client.broadcast.emit('receiveMessage', data);
@@ -213,4 +232,18 @@ function setChallenger() {
         challenger = (challenger + 1) % others.length;
     }
     return others[challenger];
+}
+
+function checkAccusation(data) {
+    var envelope = [];
+    for(var i = 0; i < secretEnvelope.cards.length; i++) {
+        envelope.push(secretEnvelope.cards[i].name);
+    }
+    if (envelope.includes(data.suspect) &&
+        envelope.includes(data.weapon) &&
+        envelope.includes(data.room)) {
+        return true;
+    } else {
+        return false;
+    }
 }

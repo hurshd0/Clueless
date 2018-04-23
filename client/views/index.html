@@ -239,7 +239,7 @@
 							<h4>Choose an option from each dropdown</h4>
 						</div>
 						<div class="modal-body">
-							<select id="suspect">
+							<select id="suspect1">
 								<option value="Miss Scarlet">Miss Scarlet</option>
 								<option value="Professor Plum">Professor Plum</option>
 								<option value="Colonel Mustard">Colonel Mustard</option>
@@ -248,7 +248,7 @@
 								<option value="Mrs White">Mrs White</option>
 							</select>
 
-							<select id="weapon">
+							<select id="weapon1">
 								<option value="Rope">Rope</option>
 								<option value="Lead Pipe">Lead Pipe</option>
 								<option value="Knife">Knife</option>
@@ -257,18 +257,49 @@
 								<option value="Revolver">Revolver</option>
 							</select>
 
-							<select id="room">
-								<!-- <option value="Study">Study</option>
+							<select id="room1">
+							</select>
+							<button type="button" onclick="getSuggestion()">Submit</button>
+						</div>
+					</div>
+				</div>
+
+				<div id="accusationModal" class="modal">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4>Choose an option from each dropdown</h4>
+						</div>
+						<div class="modal-body">
+							<select id="suspect2">
+								<option value="Miss Scarlet">Miss Scarlet</option>
+								<option value="Professor Plum">Professor Plum</option>
+								<option value="Colonel Mustard">Colonel Mustard</option>
+								<option value="Mrs Peacock">Mrs Peacock</option>
+								<option value="Mr Green">Mr Green</option>
+								<option value="Mrs White">Mrs White</option>
+							</select>
+
+							<select id="weapon2">
+								<option value="Rope">Rope</option>
+								<option value="Lead Pipe">Lead Pipe</option>
+								<option value="Knife">Knife</option>
+								<option value="Wrench">Wrench</option>
+								<option value="Candlestick">Candlestick</option>
+								<option value="Revolver">Revolver</option>
+							</select>
+
+							<select id="room2">
+								<option value="Study">Study</option>
 								<option value="Hall">Hall</option>
 								<option value="Lounge">Lounge</option>
 								<option value="Library">Library</option>
 								<option value="Billiard Room">Billiard Room</option>
 								<option value="Dining Room">Dining Room</option>
 								<option value="Conservatory">Conservatory</option>
-								<option value="Ballroom">Ballroom</option>
-								<option value="Kitchen">Kitchen</option> -->
+								<option value="BallroomKitchen">BallroomKitchen</option>
+								<option value="Kitchen">Kitchen</option>
 							</select>
-							<button type="button" onclick="getSuggestion()">Submit</button>
+							<button type="button" onclick="getAccusation()">Submit</button>
 						</div>
 					</div>
 				</div>
