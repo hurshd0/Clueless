@@ -57,12 +57,6 @@ imageSrc[3] = "/client/img/gamepieces/mediumPieceGreen_border00.png";
 imageSrc[4] = "/client/img/gamepieces/mediumPieceBlue_border00.png";
 imageSrc[5] = "/client/img/gamepieces/mediumPiecePurple_border00.png";
 
-// imageSrc[0] = "/client/img/gamepieces/pieceRed_border00.png";
-// imageSrc[1] = "/client/img/gamepieces/pieceYellow_border00.png";
-// imageSrc[2] = "/client/img/gamepieces/pieceWhite_border00.png";
-// imageSrc[3] = "/client/img/gamepieces/pieceGreen_border00.png";
-// imageSrc[4] = "/client/img/gamepieces/pieceBlue_border00.png";
-// imageSrc[5] = "/client/img/gamepieces/piecePurple_border00.png";
 
 function newConnection() {
 	return new Promise(
@@ -95,6 +89,13 @@ function main() {
 	newConnection().then(function() {
 		socket.on('gameStatus', function(data) {
 			document.getElementById('gameStatus').innerHTML = "Game Status: " + data;
+			if (data === 'Started') {
+                document.getElementById('createBtn').style.display = 'none';
+                document.getElementById('msgDiv').style.display = 'inline-block';
+            } else {
+                document.getElementById('createBtn').style.display = 'inline-block';
+                document.getElementById('msgDiv').style.display = 'none';
+            }
 		});
 
 		socket.on('playerCount', function(data) {
@@ -114,6 +115,12 @@ function main() {
 			} else {
 				document.getElementById('nameErr').innerHTML = "This name is already taken";
 			}
+        });
+
+        // A player is not able to join the game
+        socket.on('joinError', function(data) {
+            alert('Sorry. The game has already started. Redirecting to main page.');
+            returnToMain();
         });
 
         socket.on('characters', function(data) {
@@ -276,6 +283,19 @@ function main() {
         	}
         });
 
+        // Receive a card and add to player's hand
+        socket.on('addCard', function(data) {
+            myPlayer.hand.push(data);
+            document.getElementById('activityLog').innerHTML += "<div> You now have " + data.name + " in your card list</div>"
+            myCards.innerHTML += "<div>" + data.name + "</div>";
+        });
+
+        // Add a character to the list of inactive characters
+        socket.on('inactivate', function(data) {
+            var pos = gameboard.findPosition(data);
+            inactivePlayers[data] = new Player(0, "", data, pos);
+        });
+
         socket.on('insufficient', function(data) {
         	document.getElementById('chatWindow').innerHTML += "<div>There's not enough players to continue playing.</div>";
         	resetPlayer();
@@ -344,11 +364,14 @@ function resetPlayer() {
 function returnToMain() {
 	document.getElementById('main').style.display = 'inline-block';
     document.getElementById('gamearea').style.display = 'none';
+    document.getElementById('lobby').style.display = 'none';
+    document.getElementById("character").style.display = 'none';
     document.getElementById('startBtn').disabled = true;
     myCards.innerHTML = "";
     myCharacter.innerHTML = "";
     document.getElementById('chatWindow').innerHTML = "";
     document.getElementById('activityLog').innerHTML = "";
+    socket.emit('getStatus');
 }
 
 function removeCharacter(id) {

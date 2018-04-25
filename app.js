@@ -48,25 +48,29 @@ io.on('connection', function(client) {
 
 	// When someone creates a game
 	client.on('join', function() {
-		PLAYER_LIST.push(client.id);
 		gameStatus = "Created";
 		client.emit('newPlayer', {"id": client.id, "count": PLAYER_LIST.length, "characters": players, "gameStatus": gameStatus});
 		client.broadcast.emit('gameStatus', gameStatus);
-		client.broadcast.emit('playerCount', PLAYER_LIST.length);
 	});
 
 	// The Client has chosen a character
     // Receives the name of the character chosen
 	client.on('character', function(data) {
-		taken[data] = players[data];
-		delete players[data];
-		CLIENT_LIST[client.id].character = data;
-		client.broadcast.emit('characters', players);
-		if (PLAYER_LIST.length >= 3) {
-			if (gameReady()) {
-				client.emit('gameReady');
-				client.broadcast.emit('gameReady');
+		if (gameStatus !== 'Started') {
+            PLAYER_LIST.push(client.id);
+			taken[data] = players[data];
+			client.broadcast.emit('playerCount', PLAYER_LIST.length);
+			delete players[data];
+			CLIENT_LIST[client.id].character = data;
+			client.broadcast.emit('characters', players);
+			if (PLAYER_LIST.length >= 3) {
+				if (gameReady()) {
+					client.emit('gameReady');
+					client.broadcast.emit('gameReady');
+				}
 			}
+		} else {
+			client.emit('joinError');
 		}
 	});
 
@@ -174,20 +178,41 @@ io.on('connection', function(client) {
     	client.broadcast.emit('gameStatus', gameStatus);
     });
 
+    // Sends the current status of the game
+    client.on('getStatus', function(data) {
+        client.emit('gameStatus', gameStatus);
+    });
+
     client.on('disconnect', function(data) {
-    	PLAYER_LIST.splice(PLAYER_LIST.indexOf(client.id), 1);
-    	client.broadcast.emit('playerCount', PLAYER_LIST.length);
+    	// If the client was playing the game
+    	if (PLAYER_LIST.includes(client.id)) {
+    		// Check if it was the turn of the player who left
+    		if (currentTurn === PLAYER_LIST.indexOf(client.id)) {
+    			var id = setTurn();
+				CLIENT_LIST[id].emit('startTurn');
+				challengerCount = null;
+    		}
+    		PLAYER_LIST.splice(PLAYER_LIST.indexOf(client.id), 1);
+    		client.broadcast.emit('playerCount', PLAYER_LIST.length);
+	    	emitToPlayers('receiveMessage', client.character + " has left the game");
+	    	// Redistribute the player's hand if there are 3 or more players left
+	    	if (PLAYER_LIST.length >= 3 && gameStatus === 'Started') {
+                for(var i = 0; i < client.hand.length; i++) {
+                    var id = PLAYER_LIST[i % PLAYER_LIST.length];
+                    CLIENT_LIST[id].emit('addCard', client.hand[i]);
+                	CLIENT_LIST[id].emit('inactivate', client.character);
+                }
+            } else if (PLAYER_LIST.length < 3 && gameStatus === 'Started') {
+	    		emitToPlayers('insufficient');
+	    		resetGame();
+	    		client.broadcast.emit('gameStatus', gameStatus);
+	    	}
+    	}
     	if (gameStatus === 'Created' && client.character) {
     		players[client.character] = taken[client.character];
     		client.broadcast.emit('characters', players);
     	}
     	delete CLIENT_LIST[client.id];
-    	emitToPlayers('receiveMessage', client.character + " has left the game");
-    	if (PLAYER_LIST.length < 3 && gameStatus === 'Started') {
-    		emitToPlayers('insufficient');
-    		resetGame();
-    		client.broadcast.emit('gameStatus', gameStatus);
-    	}
     });
 
 	client.on('sendMessage', function(data) {
