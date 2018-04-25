@@ -14,7 +14,6 @@ var room1 = document.getElementById('room1');
 var suspect2 = document.getElementById('suspect2');
 var weapon2 = document.getElementById('weapon2');
 var room2 = document.getElementById('room2');
-var suggestion = document.getElementById('suggestion');
 var inactivePlayers = {};
 var currSuggestion = null;
 var names = null;
@@ -51,19 +50,19 @@ roomDeck.add_card(new Card("Room", "Kitchen"));
 
 // Images
 var imageSrc = new Array();
-    imageSrc[0] = "/client/img/smallPieceRed_border00.png";
-    imageSrc[1] = "/client/img/smallPieceYellow_border00.png";
-    imageSrc[2] = "/client/img/smallPieceWhite_border00.png";
-    imageSrc[3] = "/client/img/smallPieceGreen_border00.png";
-    imageSrc[4] = "/client/img/smallPieceBlue_border00.png";
-    imageSrc[5] = "/client/img/smallPiecePurple_border00.png";
+imageSrc[0] = "/client/img/gamepieces/mediumPieceRed_border00.png";
+imageSrc[1] = "/client/img/gamepieces/mediumPieceYellow_border00.png";
+imageSrc[2] = "/client/img/gamepieces/mediumPieceWhite_border00.png";
+imageSrc[3] = "/client/img/gamepieces/mediumPieceGreen_border00.png";
+imageSrc[4] = "/client/img/gamepieces/mediumPieceBlue_border00.png";
+imageSrc[5] = "/client/img/gamepieces/mediumPiecePurple_border00.png";
 
-var gamePieceImgs = [];
-for (x = 0; x < imageSrc.length; x++) {
-    var img = new Image();
-    img.src = imageSrc[x];
-    gamePieceImgs.push(img);
-}
+// imageSrc[0] = "/client/img/gamepieces/pieceRed_border00.png";
+// imageSrc[1] = "/client/img/gamepieces/pieceYellow_border00.png";
+// imageSrc[2] = "/client/img/gamepieces/pieceWhite_border00.png";
+// imageSrc[3] = "/client/img/gamepieces/pieceGreen_border00.png";
+// imageSrc[4] = "/client/img/gamepieces/pieceBlue_border00.png";
+// imageSrc[5] = "/client/img/gamepieces/piecePurple_border00.png";
 
 function newConnection() {
 	return new Promise(
@@ -86,8 +85,7 @@ function newConnection() {
 			socket.on('newPlayer', function(data) {
 				document.getElementById('playerCount').innerHTML = data.count + "/6 players";
 				playerInfo.id = data.id
-                var characters = displayCharacters(data.characters);
-                document.getElementById('characters').innerHTML = characters;
+                displayCharacters(data.characters);
                 resolve();
 			});
 		});
@@ -120,8 +118,7 @@ function main() {
 
         socket.on('characters', function(data) {
         	if (!playerInfo.character) {
-        		var characters = displayCharacters(data);
-            	document.getElementById('characters').innerHTML = characters;
+        		displayCharacters(data);
         	}
         });
 
@@ -134,8 +131,9 @@ function main() {
 
         socket.on('drawboard', function(data) {
         	document.getElementById('lobby').style.display = 'none';
+            document.getElementById("character").style.display = 'none';
         	document.getElementById('gamearea').style.display = 'inline-block';
-        	myCharacter.innerHTML = myPlayer.character;
+        	// myCharacter.innerHTML = myPlayer.character;
         	myPlayer.hand = data[0];
         	names = myPlayer.cardNames();
         	for(var name in data[1]) {
@@ -147,6 +145,9 @@ function main() {
         	}
         	myCards.innerHTML = html;
         	gameboard = new Board(imageSrc);
+        	var myImg = gameboard.selectCharacter(myPlayer.character);
+        	document.getElementById('myImg').src = myImg;
+        	document.getElementById('myCharacter').innerHTML = myPlayer.character;
         	gameboard.placeCharacters();
         });
 
@@ -258,16 +259,28 @@ function main() {
             document.getElementById('activityLog').innerHTML += "<div>" + data[0] + 
                                         " solved the mystery. The crime was committed by " + data[1].cards[0].name +
                                         " with a " + data[1].cards[1].name + " in the " + data[1].cards[2].name + "</div>";
-            inactivePlayers = {};
-            playerInfo = {"name": ""};
-            myPlayer = null;
-            gameboard = null;
-            currSuggestion = null;
-            names = null;
+            resetPlayer();
+            alert('Mystery solved. Redirecting to main page');
+            returnToMain();
+        });
+
+        socket.on('disconnect', function(data) {
+        	alert('Lost connection to the server');
         });
 
         socket.on('receiveMessage', function(data){
-            document.getElementById('chatWindow').innerHTML += "<div>" + new Date().toLocaleTimeString() + ": " + data.player + ": " + data.message + "</div>";
+        	if (data.player) {
+        		document.getElementById('chatWindow').innerHTML += "<div>" + data.player + ": " + data.message + "</div>";
+        	} else {
+        		document.getElementById('chatWindow').innerHTML += "<div>" + data + "</div>";
+        	}
+        });
+
+        socket.on('insufficient', function(data) {
+        	document.getElementById('chatWindow').innerHTML += "<div>There's not enough players to continue playing.</div>";
+        	resetPlayer();
+        	alert('The game has been reset due to insufficent players. Redirecting to main page');
+        	returnToMain();
         });
 
         // For debugging server
@@ -319,56 +332,86 @@ function startGame() {
 	socket.emit('startGame');
 }
 
+function resetPlayer() {
+	inactivePlayers = {};
+    playerInfo = {"name": ""};
+    myPlayer = null;
+    gameboard = null;
+    currSuggestion = null;
+    names = null;
+}
+
+function returnToMain() {
+	document.getElementById('main').style.display = 'inline-block';
+    document.getElementById('gamearea').style.display = 'none';
+    document.getElementById('startBtn').disabled = true;
+    myCards.innerHTML = "";
+    myCharacter.innerHTML = "";
+    document.getElementById('chatWindow').innerHTML = "";
+    document.getElementById('activityLog').innerHTML = "";
+}
+
 function removeCharacter(id) {
 	var text = "Your character is: ";
     switch(id) {
         case 0:
+        	document.getElementById('character0').style.display = 'none';
             playerInfo.character = "Miss Scarlet";
             playerInfo.position = [0, 3];
             socket.emit('character', "Miss Scarlet");
             text += "Miss Scarlet";
             break;
         case 1:
+        	document.getElementById('character1').style.display = 'none';
             playerInfo.character = "Professor Plum";
             playerInfo.position = [1, 0];
             socket.emit('character', "Professor Plum");
             text += "Professor Plum";
             break;
         case 2:
+        	document.getElementById('character2').style.display = 'none';
             playerInfo.character = "Colonel Mustard";
             playerInfo.position = [1, 4];
             socket.emit('character', "Colonel Mustard");
             text += "Colonel Mustard";
             break;
         case 3:
+        	document.getElementById('character3').style.display = 'none';
             playerInfo.character = "Mrs Peacock";
             playerInfo.position = [3, 0];
             socket.emit('character', "Mrs Peacock");
             text += "Mrs Peacock";
             break;
         case 4:
+        	document.getElementById('character4').style.display = 'none';
             playerInfo.character = "Mr Green";
             playerInfo.position = [4, 1];
             socket.emit('character', "Mr Green");
             text += "Mr Green";
             break;
         case 5:
+        	document.getElementById('character5').style.display = 'none';
             playerInfo.character = "Mrs White";
             playerInfo.position = [4, 3];
             socket.emit('character', "Mrs White");
             text += "Mrs White";
             break;
     }
-    document.getElementById("characters").innerHTML = '<h3 class="text-center">' + text + '</h3>';
+    document.getElementById("character").innerHTML = "<h3 class='text-center'>" + text + "</h3>";
+    document.getElementById("character").style.display = 'block';
+    document.getElementById("characters").style.display = 'none';
 }
 
 function displayCharacters(characters) {
-	var character = '';
-	for(var char in characters) {
-        character += '<div class="left" onclick="removeCharacter(' + characters[char].id +
-                    ')">' + char + '</div>';
+    var suspects = ['Miss Scarlet', 'Professor Plum', 'Colonel Mustard', 'Mrs Peacock', 'Mr Green', 'Mrs White'];
+    document.getElementById("characters").style.display = 'block';
+    for(var i = 0; i < 6; i++) {
+    	if (characters[suspects[i]]) {
+    		document.getElementById('character' + i).style.display = 'block';
+    	} else {
+    		document.getElementById('character' + i).style.display = 'none';
+    	}
     }
-    return character;
 }
 
 function setupGame(playerNum) {

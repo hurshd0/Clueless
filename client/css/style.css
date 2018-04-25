@@ -62,16 +62,43 @@ div {
 
 /* Lobby Page */
 .left {
-  border: 1px solid orange;
-  box-sizing: border-box;
-  width: 200px;
-  height: 300px;
+  width: 135px;
+  height: 198px;
   float: left;
   margin: 5px 5px 5px 5px;
+  display: none;
 }
 
 .left:hover {
   box-shadow: 0 1px 5px 1px orange;
+}
+
+#character0 {
+  background: url('/client/img/characters/scarlet.png') no-repeat;
+}
+
+#character1 {
+  background: url('/client/img/characters/plum.png') no-repeat;
+}
+
+#character2 {
+  background: url('/client/img/characters/mustard.png') no-repeat;
+}
+
+#character3 {
+  background: url('/client/img/characters/peacock.png') no-repeat;
+}
+
+#character4 {
+  background: url('/client/img/characters/green.png') no-repeat;
+}
+
+#character5 {
+  background: url('/client/img/characters/white.png') no-repeat;
+}
+
+#character {
+  display: none;
 }
 /* End Lobby Page */
 
@@ -79,6 +106,24 @@ div {
 #gameboard {
   width: 610px;
   float: left;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+#myImg {
+  width: 20px;
+  height: 20px;
+}
+
+.img {
+  position: relative;
+  margin: 0;
+}
+
+.room {
+  width: 140px;
+  height: 140px;
+  padding: 0;
 }
 
 .float {
@@ -86,46 +131,36 @@ div {
   text-align: center;
 }
 
-.sixteen {
-  width: 16%;
-  height: 100px;
-  background-color: grey;
-  padding-top: 35px;
-}
-
-.eighteen {
-  width: 18%;
-  height: 100px;
-  background-color: grey;
-  padding-top: 35px;
-}
-
 .quarter {
-  width: 25%;
-  height: 30px;
-  margin-top: 35px;
-  background-color: grey;
+  height: 40px;
+  margin-top: 45px;
+  padding-top: 0;
+  background-color: #9F8170;
+  width: 95px;
 }
 
 .vHallway1 {
-  width: 6%;
-  height: 152.5px;
-  margin-left: 5%;
-  background-color: grey;
+  width: 40px;
+  height: 95px;
+  padding-left: 0;
+  margin-left: 45px;
+  background-color: #9F8170;
 }
 
 .vHallway2 {
-  width: 6%;
-  height: 152.5px;
-  margin-left: 36%;
-  background-color: grey;
+  width: 40px;
+  height: 95px;
+  padding-left: 0;
+  margin-left: 200px;
+  background-color: #9F8170;
 }
 
 .vHallway3 {
-  width: 6%;
-  height: 152.5px;
-  margin-left: 36%;
-  background-color: grey;
+  width: 40px;
+  height: 95px;
+  padding-left: 0;
+  margin-left: 200px;
+  background-color: #9F8170;
 }
 
 div.float {
@@ -133,48 +168,77 @@ div.float {
 }
 
 #study {
-  background-color: green;
+  background: url('/client/img/rooms/study.png') no-repeat;
 }
 
 #hall {
-  background-color: green;
+  background: url('/client/img/rooms/hall.png') no-repeat;
 }
 
 #lounge {
-  background-color: green;
+  background: url('/client/img/rooms/lounge.png') no-repeat;
 }
 
 #dining {
-  background-color: green;
+  background: url('/client/img/rooms/dining.png') no-repeat;
 }
 
 #billiard {
-  background-color: green;
+  background: url('/client/img/rooms/billiard.png') no-repeat;
 }
 
 #library {
-  background-color: green;
+  background: url('/client/img/rooms/library.png') no-repeat;
 }
 
 #conservatory {
-  background-color: green;
+  background: url('/client/img/rooms/conservatory.png') no-repeat;
 }
 
 #ballroom {
-  background-color: green;
+  background: url('/client/img/rooms/ballroom.png') no-repeat;
 }
 
 #kitchen {
-  background-color: green;
+  background: url('/client/img/rooms/kitchen.png') no-repeat;
+}
+
+.pos1 {
+  top: 10px;
+  left: 5px;
+}
+
+.pos2 {
+  top: 10px;
+  left: 25px;
+}
+
+.pos3 {
+  top: 50px;
+  right: 80px;
+}
+
+.pos4 {
+  top: 50px;
+  left: 30px;
+}
+
+.pos5 {
+  top: 50px;
+  left: 25px;
+}
+
+.pos6 {
+  top: 10px;
+  right: 10px;
 }
 
 .pos7 {
-  margin: 71.25px auto;
-  margin-top: 71.25px;
+  margin: 37px auto;
 }
 
 .pos8 {
-  margin: 10px auto;
+  margin: 5px auto;
 }
 
 .chat {
@@ -208,6 +272,7 @@ div.float {
   width: 300px;
   height: 605px;
   padding: 0;
+  margin-left: 5px;
 }
 
 #firstRow {

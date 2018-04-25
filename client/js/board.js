@@ -39,6 +39,17 @@ function Board(images) {
     ];
 }
 
+Board.prototype.findPosition = function(name) {
+    for(var i = 0; i < this.positions.length; i++) {
+        for(var j = 0; j < this.positions[i].length; j++) {
+            var myarr = this.positions[i][j].characters;
+            if (myarr.includes(name)) {
+                return [i, j];
+            }
+        }
+    }
+};
+
 Board.prototype.checkPosition = function(pos, name) {
     var oldPos = [];
     var row, col;

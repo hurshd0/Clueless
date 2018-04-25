@@ -19,6 +19,7 @@ var players = {"Miss Scarlet": {"id": 0, "position": [0, 3]},
 			"Mrs Peacock": {"id": 3, "position": [3, 0]}, 
 			"Mr Green": {"id": 4, "position": [4, 1]}, 
 			"Mrs White": {"id": 5, "position": [4, 3]}};
+var taken = {};
 // Holds the names chosen by the players
 var names = [];
 // Holds the answer to the mystery
@@ -45,6 +46,7 @@ io.on('connection', function(client) {
 		client.emit('visitor', gameStatus);
 	});
 
+	// When someone creates a game
 	client.on('join', function() {
 		PLAYER_LIST.push(client.id);
 		gameStatus = "Created";
@@ -53,21 +55,28 @@ io.on('connection', function(client) {
 		client.broadcast.emit('playerCount', PLAYER_LIST.length);
 	});
 
+	// The Client has chosen a character
+    // Receives the name of the character chosen
 	client.on('character', function(data) {
+		taken[data] = players[data];
 		delete players[data];
 		CLIENT_LIST[client.id].character = data;
 		client.broadcast.emit('characters', players);
-		// if (PLAYER_LIST.length >= 3) {
+		if (PLAYER_LIST.length >= 3) {
 			if (gameReady()) {
 				client.emit('gameReady');
 				client.broadcast.emit('gameReady');
 			}
-		// }
+		}
 	});
 
+	// A player has chosen a name
+    // Make sure that name is not already taken
+    // Receives the name that was chosen
 	client.on('checkName', function(data) {
 		client.emit('nameResponse', checkName(data));
 		names.push(data);
+		CLIENT_LIST[client.id].name = data;
 	});
 
 	// Mark game as started
@@ -88,16 +97,24 @@ io.on('connection', function(client) {
 		for(var i = 0; i < PLAYER_LIST.length; i++) {
 			var id = PLAYER_LIST[i];
 			var player = CLIENT_LIST[id];
+			// Save the player's hand
+			player.hand = data[i];
 			player.emit('drawboard', [data[i], players]);
 		}
+		// Choose a player to start
 		var id = setTurn();
 		CLIENT_LIST[id].emit('startTurn');
 	});
 
+	// A player has moved
+    // Receives the new position of the player
 	client.on('newPosition', function(data) {
 		client.broadcast.emit('move', data);
 	});
 
+	// A player has made a suggestion
+    // Receives the suspect, weapon, room in suggestion
+    // Might also receive a board with new position
 	client.on('suggest', function(data) {
 		if(data[0].board) {
 			client.broadcast.emit('suggestion', {"suggestion": data, "name": client.character});
@@ -110,6 +127,8 @@ io.on('connection', function(client) {
 		}
 	});
 
+	// An active player has been moved
+    // Receives the new position and the suggestion
 	client.on('moved', function(data) {
 		client.broadcast.emit('suggestion', data);
 		var id = setChallenger();
@@ -117,10 +136,14 @@ io.on('connection', function(client) {
 		challengerCount++;
 	});
 
+	// A player has proven a suggestion false
 	client.on('sendProof', function(data) {
+		// Find the current player and let them know
+        // the suggestion has been proven false
 		CLIENT_LIST[PLAYER_LIST[currentTurn]].emit('proven', {"proof": data, "name": client.character});
 	});
 
+	// Selects the next player to prove a suggestion
 	client.on('nextChallenger', function(data) {
         var id = setChallenger();
         challengerCount++;
@@ -131,12 +154,15 @@ io.on('connection', function(client) {
         }
     });
 
+	// Selects the next player to play
 	client.on('nextTurn', function(data) {
 		var id = setTurn();
 		CLIENT_LIST[id].emit('startTurn');
 		challengerCount = null;
 	});
 
+	// A player has made an accusation
+    // Receives the suspect, weapon, room in accusation
 	client.on('accuse', function(data) {
         client.emit('accusationResponse', [checkAccusation(data), secretEnvelope]);
     });
@@ -144,23 +170,24 @@ io.on('connection', function(client) {
     // Mark game as ended
     client.on("endGame", function(data){
         client.broadcast.emit("gameOver", [client.character, secretEnvelope]);
-        gameStatus = 'Not Started';
-        client.broadcast.emit('gameStatus', gameStatus);
-        // Reset game parameters?
-        players = {"Miss Scarlet": {"id": 0, "position": [0, 3]}, 
-                "Professor Plum": {"id": 1, "position": [1, 0]}, 
-                "Colonel Mustard": {"id": 2, "position": [1, 4]}, 
-                "Mrs Peacock": {"id": 3, "position": [3, 0]}, 
-                "Mr Green": {"id": 4, "position": [4, 1]}, 
-                "Mrs White": {"id": 5, "position": [4, 3]}};
-        PLAYER_LIST = [];
-        names = [];
-        secretEnvelope = null;
-        currentTurn = null;
-        others = null;
-        challenger = null;
-        challengerCount = null;
-        // io = null;
+        resetGame();
+    	client.broadcast.emit('gameStatus', gameStatus);
+    });
+
+    client.on('disconnect', function(data) {
+    	PLAYER_LIST.splice(PLAYER_LIST.indexOf(client.id), 1);
+    	client.broadcast.emit('playerCount', PLAYER_LIST.length);
+    	if (gameStatus === 'Created' && client.character) {
+    		players[client.character] = taken[client.character];
+    		client.broadcast.emit('characters', players);
+    	}
+    	delete CLIENT_LIST[client.id];
+    	emitToPlayers('receiveMessage', client.character + " has left the game");
+    	if (PLAYER_LIST.length < 3 && gameStatus === 'Started') {
+    		emitToPlayers('insufficient');
+    		resetGame();
+    		client.broadcast.emit('gameStatus', gameStatus);
+    	}
     });
 
 	client.on('sendMessage', function(data) {
@@ -174,6 +201,7 @@ io.on('connection', function(client) {
 	});
 });
 
+// Checks if a name is already taken
 function checkName(name) {
 	var idx = -1;
 	if (names.length > 0) {
@@ -182,6 +210,9 @@ function checkName(name) {
 	return {"idx": idx, "name": name};
 }
 
+// Checks if the game is ready to be started
+// The game can only be started once all the players
+// currently in lobby have chosen a character
 function gameReady() {
 	var count = 0;
 	for(var i = 0; i < PLAYER_LIST.length; i++) {
@@ -197,6 +228,7 @@ function gameReady() {
 	}
 }
 
+// Finds a specific client
 function findClient(character) {
     for(var client in CLIENT_LIST) {
         if (CLIENT_LIST[client].character === character) {
@@ -205,6 +237,7 @@ function findClient(character) {
     }
 }
 
+// Controls whose turn it is
 function setTurn() {
 	if(currentTurn === null) {
 		currentTurn = 0;
@@ -215,6 +248,8 @@ function setTurn() {
     return PLAYER_LIST[currentTurn];
 }
 
+// Returns all client ids in PLAYER_LIST
+// except the id that was passed.
 function getOthers(id) {
 	var arr = [];
 	for(var i = 0; i < PLAYER_LIST.length; i++) {
@@ -225,6 +260,7 @@ function getOthers(id) {
 	return arr;
 }
 
+// Controls who is proving a suggestion
 function setChallenger() {
     if (challenger === null) {
         challenger = 0;
@@ -234,6 +270,7 @@ function setChallenger() {
     return others[challenger];
 }
 
+// Checks if an accusation is correct
 function checkAccusation(data) {
     var envelope = [];
     for(var i = 0; i < secretEnvelope.cards.length; i++) {
@@ -246,4 +283,33 @@ function checkAccusation(data) {
     } else {
         return false;
     }
+}
+
+function resetGame() {
+	gameStatus = 'Not Started';
+    // Reset game parameters
+    players = {"Miss Scarlet": {"id": 0, "position": [0, 3]}, 
+              "Professor Plum": {"id": 1, "position": [1, 0]}, 
+              "Colonel Mustard": {"id": 2, "position": [1, 4]}, 
+              "Mrs Peacock": {"id": 3, "position": [3, 0]}, 
+              "Mr Green": {"id": 4, "position": [4, 1]}, 
+              "Mrs White": {"id": 5, "position": [4, 3]}};
+    PLAYER_LIST = [];
+    names = [];
+    secretEnvelope = null;
+    currentTurn = null;
+    others = null;
+    challenger = null;
+    challengerCount = null;
+}
+
+function emitToPlayers(msg, data=null) {
+	for(var i = 0; i < PLAYER_LIST.length; i++) {
+		var id = PLAYER_LIST[i];
+		if (data !== null) {
+			CLIENT_LIST[id].emit(msg, data);
+		} else {
+			CLIENT_LIST[id].emit(msg);
+		}
+	}
 }
