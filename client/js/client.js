@@ -47,9 +47,14 @@ function newConnection() {
 			socket.on('visitor', function(data) {
 				document.getElementById('gameStatus').innerHTML = "Game Status: " + data;
 				if (data === 'Started') {
-					document.getElementById('createBtn').style.display = 'none';
-					document.getElementById('msgDiv').style.display = 'inline-block';
-				}
+                    document.getElementById('game').style.display = 'none';
+                    document.getElementById('msgDiv').style.display = 'inline-block';
+                } else if (data === 'Created') {
+                    document.getElementById('createBtn').innerHTML = 'Join Game';
+                } else {
+                    document.getElementById('game').style.display = 'inline-block';
+                    document.getElementById('msgDiv').style.display = 'none';
+                }
 				resolve();
 			});
 
@@ -67,10 +72,10 @@ function main() {
 		socket.on('gameStatus', function(data) {
 			document.getElementById('gameStatus').innerHTML = "Game Status: " + data;
 			if (data === 'Started') {
-                document.getElementById('createBtn').style.display = 'none';
+                document.getElementById('game').style.display = 'none';
                 document.getElementById('msgDiv').style.display = 'inline-block';
             } else {
-                document.getElementById('createBtn').style.display = 'inline-block';
+                document.getElementById('game').style.display = 'inline-block';
                 document.getElementById('msgDiv').style.display = 'none';
             }
 		});
@@ -108,8 +113,6 @@ function main() {
 
         socket.on('gameReady', function(data) {
         	document.getElementById('startBtn').disabled = false;
-        	myPlayer = new Player(playerInfo.id, playerInfo.name, playerInfo.character, playerInfo.position);
-        	myPlayer.isActive = true;
         });
 
 
@@ -117,7 +120,9 @@ function main() {
         	document.getElementById('lobby').style.display = 'none';
             document.getElementById("character").style.display = 'none';
         	document.getElementById('gamearea').style.display = 'inline-block';
-        	// myCharacter.innerHTML = myPlayer.character;
+        	// Create a new player object and set it to be an active player
+            myPlayer = new Player(playerInfo.id, playerInfo.name, playerInfo.character, playerInfo.position);
+            myPlayer.isActive = true;
         	myPlayer.hand = data[0];
         	names = myPlayer.cardNames();
         	for(var name in data[1]) {
@@ -179,6 +184,10 @@ function main() {
 	        	alert('It is your turn. You can Move to a new room if possible and make a suggestion or end your turn');
 	        	document.getElementById('endTurnBtn').disabled = false;
 
+	        	var img = gameboard.selectCharacter(myPlayer.character);
+        		document.getElementById('playerImg').src = img;
+        		document.getElementById('turn').innerHTML = myPlayer.character;
+
 	        	if (myPlayer.wasMoved) {
 	                alert('You can either move to a new room or make a suggestion or accusation now');
 	                document.getElementById('suggestion').disabled = false;
@@ -187,6 +196,12 @@ function main() {
         	} else {
         		socket.emit('nextTurn');
         	}      	
+        });
+
+        socket.on('turn', function(data) {
+        	var img = gameboard.selectCharacter(data);
+        	document.getElementById('playerImg').src = img;
+        	document.getElementById('turn').innerHTML = data;
         });
 
         socket.on('prove', function(data) {

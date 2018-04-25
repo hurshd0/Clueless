@@ -61,8 +61,8 @@
 					<p>This is a modified version of the board game Clue. Full instructions can be found in the  <a href="#">instruction page</a></p>
 				</div>
 				<div class="text-center">
-					<div class="btn-group btn-group-lg" role="group" id='createBtn'>
-						<button type="button" class="btn btn-success btn-start" onclick="createGame()">New Game</button>
+					<div class="btn-group btn-group-lg" role="group" id='game'>
+						<button type="button" class="btn btn-success btn-start" onclick="createGame()" id="createBtn">New Game</button>
 					</div>
 					<div id="msgDiv">
 						A game is already in progress.
@@ -236,7 +236,11 @@
 								<img src="" id="myImg">
 								<h6 id="myCharacter"></h6>
 							</div>
-							<div class="info"></div>
+							<div class="info text-center">
+								<h6>Current turn</h6>
+								<img src="" id="playerImg">
+								<h6 id="turn"></h6>
+							</div>
 							<div class="info"></div>
 						</div>
 						

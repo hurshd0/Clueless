@@ -48,9 +48,11 @@ io.on('connection', function(client) {
 
 	// When someone creates a game
 	client.on('join', function() {
-		gameStatus = "Created";
-		client.emit('newPlayer', {"id": client.id, "count": PLAYER_LIST.length, "characters": players, "gameStatus": gameStatus});
-		client.broadcast.emit('gameStatus', gameStatus);
+		gameStatus = "Created";             // Change the status of the game
+        // Send the client the id, # of players, a list of remaining characters to choose from and the status of the game
+        client.emit('newPlayer', {"id": client.id, "count": PLAYER_LIST.length, "characters": players});
+        // Send game status and player count to all connected clients
+        client.broadcast.emit('gameStatus', gameStatus);
 	});
 
 	// The Client has chosen a character
@@ -108,6 +110,7 @@ io.on('connection', function(client) {
 		// Choose a player to start
 		var id = setTurn();
 		CLIENT_LIST[id].emit('startTurn');
+		emitToPlayers('turn', CLIENT_LIST[id].character);
 	});
 
 	// A player has moved
@@ -162,6 +165,7 @@ io.on('connection', function(client) {
 	client.on('nextTurn', function(data) {
 		var id = setTurn();
 		CLIENT_LIST[id].emit('startTurn');
+		emitToPlayers('turn', CLIENT_LIST[id].character);
 		challengerCount = null;
 	});
 
