@@ -173,9 +173,13 @@ io.on('connection', function(client) {
 
     // Mark game as ended
     client.on("endGame", function(data){
-        client.broadcast.emit("gameOver", [client.character, secretEnvelope]);
+        if (data) {
+          client.broadcast.emit("gameOver", [client.character, secretEnvelope]);  
+        } else {
+            client.broadcast.emit("gameOver");
+        }
         resetGame();
-    	client.broadcast.emit('gameStatus', gameStatus);
+        client.broadcast.emit('gameStatus', gameStatus);
     });
 
     // Sends the current status of the game

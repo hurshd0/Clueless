@@ -20,33 +20,10 @@ var names = null;
 
 // Suspect Deck
 var suspectDeck = new Deck();
-suspectDeck.add_card(new Card("Suspect", "Miss Scarlet"));
-suspectDeck.add_card(new Card("Suspect", "Professor Plum"));
-suspectDeck.add_card(new Card("Suspect", "Colonel Mustard"));
-suspectDeck.add_card(new Card("Suspect", "Mrs Peacock"));
-suspectDeck.add_card(new Card("Suspect", "Mr Green"));
-suspectDeck.add_card(new Card("Suspect", "Mrs White"));
-
 // Weapon Deck
 var weaponDeck = new Deck();
-weaponDeck.add_card(new Card("Weapon", "Rope"));
-weaponDeck.add_card(new Card("Weapon", "Lead Pipe"));
-weaponDeck.add_card(new Card("Weapon", "Knife"));
-weaponDeck.add_card(new Card("Weapon", "Wrench"));
-weaponDeck.add_card(new Card("Weapon", "Candlestick"));
-weaponDeck.add_card(new Card("Weapon", "Revolver"));
-
 // Room Deck
 var roomDeck = new Deck();
-roomDeck.add_card(new Card("Room", "Study"));
-roomDeck.add_card(new Card("Room", "Hall"));
-roomDeck.add_card(new Card("Room", "Lounge"));
-roomDeck.add_card(new Card("Room", "Library"));
-roomDeck.add_card(new Card("Room", "Billiard Room"));
-roomDeck.add_card(new Card("Room", "Dining Room"));
-roomDeck.add_card(new Card("Room", "Conservatory"));
-roomDeck.add_card(new Card("Room", "Ballroom"));
-roomDeck.add_card(new Card("Room", "Kitchen"));
 
 // Images
 var imageSrc = new Array();
@@ -263,11 +240,18 @@ function main() {
         });
 
         socket.on('gameOver', function(data) {
-            document.getElementById('activityLog').innerHTML += "<div>" + data[0] + 
-                                        " solved the mystery. The crime was committed by " + data[1].cards[0].name +
-                                        " with a " + data[1].cards[1].name + " in the " + data[1].cards[2].name + "</div>";
+            if (data) {
+                // Display the name of the character who solved the mystery
+                // and what the answer was
+                document.getElementById('activityLog').innerHTML += "<div>" + data[0] + 
+                                    " solved the mystery. The crime was committed by " + data[1].cards[0].name +
+                                    " with a " + data[1].cards[1].name + " in the " + data[1].cards[2].name + "</div>";
+
+                alert('Mystery solved. Redirecting to main page');
+            } else {
+                alert('A player has ended the game. Redirecting to main page');
+            }
             resetPlayer();
-            alert('Mystery solved. Redirecting to main page');
             returnToMain();
         });
 
@@ -438,6 +422,7 @@ function displayCharacters(characters) {
 }
 
 function setupGame(playerNum) {
+	populateDecks();
 	var response = {};
 	// Shuffle the decks
 	suspectDeck.shuffle();
@@ -595,4 +580,41 @@ function getAccusation() {
     document.getElementById('suggestion').disabled = true;
     document.getElementById('accusation').disabled = true;
     socket.emit('accuse', {"suspect": suspect2.value, "weapon": weapon2.value, "room": room2.value});
+}
+
+function populateDecks() {
+    // Suspect Deck
+    suspectDeck.add_card(new Card("Suspect", "Miss Scarlet"));
+    suspectDeck.add_card(new Card("Suspect", "Professor Plum"));
+    suspectDeck.add_card(new Card("Suspect", "Colonel Mustard"));
+    suspectDeck.add_card(new Card("Suspect", "Mrs Peacock"));
+    suspectDeck.add_card(new Card("Suspect", "Mr Green"));
+    suspectDeck.add_card(new Card("Suspect", "Mrs White"));
+
+    // Weapon Deck
+    weaponDeck.add_card(new Card("Weapon", "Rope"));
+    weaponDeck.add_card(new Card("Weapon", "Lead Pipe"));
+    weaponDeck.add_card(new Card("Weapon", "Knife"));
+    weaponDeck.add_card(new Card("Weapon", "Wrench"));
+    weaponDeck.add_card(new Card("Weapon", "Candlestick"));
+    weaponDeck.add_card(new Card("Weapon", "Revolver"));
+
+    // Room Deck
+    roomDeck.add_card(new Card("Room", "Study"));
+    roomDeck.add_card(new Card("Room", "Hall"));
+    roomDeck.add_card(new Card("Room", "Lounge"));
+    roomDeck.add_card(new Card("Room", "Library"));
+    roomDeck.add_card(new Card("Room", "Billiard Room"));
+    roomDeck.add_card(new Card("Room", "Dining Room"));
+    roomDeck.add_card(new Card("Room", "Conservatory"));
+    roomDeck.add_card(new Card("Room", "Ballroom"));
+    roomDeck.add_card(new Card("Room", "Kitchen"));
+}
+
+function endGame(){
+    socket.emit("endGame", false);
+}
+
+function exitGame(){
+    socket.emit("exitGame");
 }
