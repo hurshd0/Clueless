@@ -190,33 +190,24 @@ io.on('connection', function(client) {
     client.on('disconnect', function(data) {
     	// If the client was playing the game
     	if (PLAYER_LIST.includes(client.id)) {
-    		// Check if it was the turn of the player who left
-    		if (currentTurn === PLAYER_LIST.indexOf(client.id)) {
-    			var id = setTurn();
-				CLIENT_LIST[id].emit('startTurn');
-				challengerCount = null;
-    		}
-    		PLAYER_LIST.splice(PLAYER_LIST.indexOf(client.id), 1);
-    		client.broadcast.emit('playerCount', PLAYER_LIST.length);
-	    	emitToPlayers('receiveMessage', client.character + " has left the game");
-	    	// Redistribute the player's hand if there are 3 or more players left
-	    	if (PLAYER_LIST.length >= 3 && gameStatus === 'Started') {
-                for(var i = 0; i < client.hand.length; i++) {
-                    var id = PLAYER_LIST[i % PLAYER_LIST.length];
-                    CLIENT_LIST[id].emit('addCard', client.hand[i]);
-                	CLIENT_LIST[id].emit('inactivate', client.character);
-                }
-            } else if (PLAYER_LIST.length < 3 && gameStatus === 'Started') {
-	    		emitToPlayers('insufficient');
-	    		resetGame();
-	    		client.broadcast.emit('gameStatus', gameStatus);
-	    	}
-    	}
+            leaveGame(client.id, client.character, client.hand);
+            client.broadcast.emit('playerCount', PLAYER_LIST.length);
+            client.broadcast.emit('gameStatus', gameStatus);
+        }
+        // If the game has been created and the player had
+        // already chosen a character, replace the character that was chosen
     	if (gameStatus === 'Created' && client.character) {
     		players[client.character] = taken[client.character];
     		client.broadcast.emit('characters', players);
     	}
     	delete CLIENT_LIST[client.id];
+    });
+
+    // Player-initiated action to leave the current game
+    client.on("exitGame", function(data) {
+        leaveGame(client.id, client.character, client.hand);
+        client.broadcast.emit('playerCount', PLAYER_LIST.length);
+        client.broadcast.emit('gameStatus', gameStatus);
     });
 
 	client.on('sendMessage', function(data) {
@@ -341,4 +332,26 @@ function emitToPlayers(msg, data=null) {
 			CLIENT_LIST[id].emit(msg);
 		}
 	}
+}
+
+function leaveGame(id, character, hand) {
+    // Check if it was the turn of the player who left
+    if (currentTurn === PLAYER_LIST.indexOf(id)) {
+        var nxt = setTurn();
+        CLIENT_LIST[nxt].emit('startTurn');
+        challengerCount = null;
+    }
+    PLAYER_LIST.splice(PLAYER_LIST.indexOf(id), 1);
+    emitToPlayers('receiveMessage', character + " has left the game");
+    // Redistribute the player's hand if there are 3 or more players left
+    if (PLAYER_LIST.length >= 3 && gameStatus === 'Started') {
+        for(var i = 0; i < hand.length; i++) {
+            var client = PLAYER_LIST[i % PLAYER_LIST.length];
+            CLIENT_LIST[client].emit('addCard', hand[i]);
+            CLIENT_LIST[client].emit('inactivate', character);
+        }
+    } else if (PLAYER_LIST.length < 3 && gameStatus === 'Started') {
+        emitToPlayers('insufficient');
+        resetGame();
+    }
 }

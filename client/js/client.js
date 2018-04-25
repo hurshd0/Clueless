@@ -617,4 +617,7 @@ function endGame(){
 
 function exitGame(){
     socket.emit("exitGame");
+    resetPlayer();
+    alert('You have chosen to exit the game. Redirecting to main page');
+    returnToMain();
 }
