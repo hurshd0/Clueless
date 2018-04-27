@@ -210,3 +210,56 @@ Board.prototype.placeCharacters = function() {
         }
     }
 };
+
+Board.prototype.clearBoard = function() {
+    for(var i = 0; i < this.positions.length; i++) {
+        for(var j = 0; j < this.positions[i].length; j++) {
+            var temp = this.positions[i][j];
+            if (temp.room != null) {
+                for(var k = 0; k < temp.characters.length; k++) {
+                    document.getElementById(temp.room + (k + 1).toString()).src = "";
+                }
+            }
+        }
+    }
+};
+
+Board.prototype.initializeBoard = function() {
+    this.positions = [
+        [
+            {"room": "study", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "SH", "characters": [""]}, 
+            {"room": "hall", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "HL", "characters": ["Miss Scarlet"]}, 
+            {"room": "lounge", "characters": ["", "", "", "", "", ""]}
+        ],
+        [
+            {"room": "SL", "characters": ["Professor Plum"]}, 
+            {"room": null, "characters": []}, 
+            {"room": "HB", "characters": [""]}, 
+            {"room": null, "characters": []}, 
+            {"room": "LD", "characters": ["Colonel Mustard"]}
+        ],
+        [
+            {"room": "library", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "LB", "characters": [""]}, 
+            {"room": "billiard", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "BD", "characters": [""]}, 
+            {"room": "dining", "characters": ["", "", "", "", "", ""]}
+        ],
+        [
+            {"room": "LC", "characters": ["Mrs Peacock"]}, 
+            {"room": null, "characters": []}, 
+            {"room": "BB", "characters": [""]}, 
+            {"room": null, "characters": []}, 
+            {"room": "DK", "characters": [""]}
+        ],
+        [
+            {"room": "conservatory", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "CB", "characters": ["Mr Green"]}, 
+            {"room": "ballroom", "characters": ["", "", "", "", "", ""]}, 
+            {"room": "BK", "characters": ["Mrs White"]}, 
+            {"room": "kitchen", "characters": ["", "", "", "", "", ""]}
+        ]
+    ];
+};

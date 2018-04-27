@@ -115,10 +115,10 @@ div {
   height: 20px;
 }
 
-.img {
+/*.img {
   position: relative;
   margin: 0;
-}
+}*/
 
 .room {
   width: 140px;
@@ -203,7 +203,7 @@ div.float {
   background: url('/client/img/rooms/kitchen.png') no-repeat;
 }
 
-.pos1 {
+/*.pos1 {
   top: 10px;
   left: 5px;
 }
@@ -231,7 +231,7 @@ div.float {
 .pos6 {
   top: 10px;
   right: 10px;
-}
+}*/
 
 .pos7 {
   margin: 37px auto;

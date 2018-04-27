@@ -5,7 +5,6 @@ var gameboard = null;
 var chatForm = document.getElementById('chatForm');
 var chatInput = document.getElementById('chatInput');
 var myCards = document.getElementById('myCards');
-var myCharacter = document.getElementById('myPlayer');
 var suggestionModal = document.getElementById('suggestionModal');
 var accusationModal = document.getElementById('accusationModal');
 var suspect1 = document.getElementById('suspect1');
@@ -19,11 +18,11 @@ var currSuggestion = null;
 var names = null;
 
 // Suspect Deck
-var suspectDeck = new Deck();
+var suspectDeck = null;
 // Weapon Deck
-var weaponDeck = new Deck();
+var weaponDeck = null;
 // Room Deck
-var roomDeck = new Deck();
+var roomDeck = null;
 
 // Images
 var imageSrc = new Array();
@@ -74,8 +73,11 @@ function main() {
 			if (data === 'Started') {
                 document.getElementById('game').style.display = 'none';
                 document.getElementById('msgDiv').style.display = 'inline-block';
+            } else if (data === 'Created') {
+                document.getElementById('createBtn').innerHTML = 'Join Game';
             } else {
                 document.getElementById('game').style.display = 'inline-block';
+                document.getElementById('createBtn').innerHTML = 'New Game';
                 document.getElementById('msgDiv').style.display = 'none';
             }
 		});
@@ -134,6 +136,8 @@ function main() {
         	}
         	myCards.innerHTML = html;
         	gameboard = new Board(imageSrc);
+            gameboard.clearBoard();
+            // gameboard.initializeBoard();
         	var myImg = gameboard.selectCharacter(myPlayer.character);
         	document.getElementById('myImg').src = myImg;
         	document.getElementById('myCharacter').innerHTML = myPlayer.character;
@@ -246,7 +250,7 @@ function main() {
             document.getElementById('activityLog').innerHTML += html;
             if (data[0]) {
                 alert('You have solved the mystery');
-                socket.emit('endGame');
+                socket.emit('endGame', true);
             } else {
                 myPlayer.isActive = false;
                 alert('Your accusation is incorrect');
@@ -256,17 +260,25 @@ function main() {
 
         socket.on('gameOver', function(data) {
             if (data) {
-                // Display the name of the character who solved the mystery
-                // and what the answer was
-                document.getElementById('activityLog').innerHTML += "<div>" + data[0] + 
+                if (Array.isArray(data)) {
+                    // Display the name of the character who solved the mystery
+                    // and what the answer was
+                    document.getElementById('activityLog').innerHTML += "<div>" + data[0] + 
                                     " solved the mystery. The crime was committed by " + data[1].cards[0].name +
                                     " with a " + data[1].cards[1].name + " in the " + data[1].cards[2].name + "</div>";
 
-                alert('Mystery solved. Redirecting to main page');
+                    alert('Mystery solved. Redirecting to main page');
+                } else {
+                    var txt = "Nobody was able to solve the mystery. The crime was committed by " +
+                                data.cards[0].name + " with a " + data.cards[1].name + " in the " +
+                                data.cards[2].name + ". Redirecting to main page.";
+                    alert(txt);
+                }
+                
             } else {
                 alert('A player has ended the game. Redirecting to main page');
             }
-            resetPlayer();
+            resetGame();
             returnToMain();
         });
 
@@ -297,7 +309,7 @@ function main() {
 
         socket.on('insufficient', function(data) {
         	document.getElementById('chatWindow').innerHTML += "<div>There's not enough players to continue playing.</div>";
-        	resetPlayer();
+        	resetGame();
         	alert('The game has been reset due to insufficent players. Redirecting to main page');
         	returnToMain();
         });
@@ -351,13 +363,17 @@ function startGame() {
 	socket.emit('startGame');
 }
 
-function resetPlayer() {
+function resetGame() {
 	inactivePlayers = {};
     playerInfo = {"name": ""};
     myPlayer = null;
     gameboard = null;
     currSuggestion = null;
     names = null;
+    gameboard = null;
+    suspectDeck = null;
+    weaponDeck = null;
+    roomDeck = null;
 }
 
 function returnToMain() {
@@ -366,8 +382,6 @@ function returnToMain() {
     document.getElementById('lobby').style.display = 'none';
     document.getElementById("character").style.display = 'none';
     document.getElementById('startBtn').disabled = true;
-    myCards.innerHTML = "";
-    myCharacter.innerHTML = "";
     document.getElementById('chatWindow').innerHTML = "";
     document.getElementById('activityLog').innerHTML = "";
     socket.emit('getStatus');
@@ -599,6 +613,7 @@ function getAccusation() {
 
 function populateDecks() {
     // Suspect Deck
+    suspectDeck = new Deck();
     suspectDeck.add_card(new Card("Suspect", "Miss Scarlet"));
     suspectDeck.add_card(new Card("Suspect", "Professor Plum"));
     suspectDeck.add_card(new Card("Suspect", "Colonel Mustard"));
@@ -607,6 +622,7 @@ function populateDecks() {
     suspectDeck.add_card(new Card("Suspect", "Mrs White"));
 
     // Weapon Deck
+    weaponDeck = new Deck();
     weaponDeck.add_card(new Card("Weapon", "Rope"));
     weaponDeck.add_card(new Card("Weapon", "Lead Pipe"));
     weaponDeck.add_card(new Card("Weapon", "Knife"));
@@ -615,6 +631,7 @@ function populateDecks() {
     weaponDeck.add_card(new Card("Weapon", "Revolver"));
 
     // Room Deck
+    roomDeck = new Deck();
     roomDeck.add_card(new Card("Room", "Study"));
     roomDeck.add_card(new Card("Room", "Hall"));
     roomDeck.add_card(new Card("Room", "Lounge"));

@@ -33,6 +33,8 @@ var challenger = null;
 // Keeps track of how many players got a chance
 // to prove the suggestion
 var challengerCount = null;
+// Number of accusations that have been made
+var accusationCount = 0;
 
 var io = require('socket.io')(server, {});
 io.on('connection', function(client) {
@@ -172,15 +174,23 @@ io.on('connection', function(client) {
 	// A player has made an accusation
     // Receives the suspect, weapon, room in accusation
 	client.on('accuse', function(data) {
-        client.emit('accusationResponse', [checkAccusation(data), secretEnvelope]);
+		accusationCount++;
+		if (accusationCount < PLAYER_LIST.length) {
+			client.emit('accusationResponse', [checkAccusation(data), secretEnvelope]);
+		} else {
+			emitToPlayers('gameOver', secretEnvelope);
+			resetGame();
+			client.broadcast.emit('gameStatus', gameStatus);
+		}
     });
 
     // Mark game as ended
     client.on("endGame", function(data){
         if (data) {
-          client.broadcast.emit("gameOver", [client.character, secretEnvelope]);  
+        	console.log('Player guessed right');
+          emitToPlayers("gameOver", [client.character, secretEnvelope]);  
         } else {
-            client.broadcast.emit("gameOver");
+            emitToPlayers("gameOver");
         }
         resetGame();
         client.broadcast.emit('gameStatus', gameStatus);
@@ -325,6 +335,7 @@ function resetGame() {
     others = null;
     challenger = null;
     challengerCount = null;
+    accusationCount = 0;
 }
 
 function emitToPlayers(msg, data=null) {
