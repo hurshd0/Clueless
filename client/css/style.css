@@ -2,7 +2,7 @@ body {
   font-size: 16px;
   /*color: #fff;*/
   background-color: #a5a5af;
-  /*font-family: 'Oxygen', sans-serif;*/
+  font-family: 'Oxygen', sans-serif;
 }
 
 /* HEADER */
@@ -27,7 +27,7 @@ div {
   padding-top: 40px;
 }
 .navbar-brand h1 {
-  /*font-family: 'Lora', serif;*/
+  font-family: 'Lora', serif;
   color: #015249;
   font-size: 1.5em;
   text-transform: uppercase;
@@ -39,6 +39,7 @@ div {
 }
 .navbar-brand a:hover, .navbar-brand a:focus, #home a:hover {
   text-decoration: none;
+  cursor: pointer;
 }
 
 #nav-list {
@@ -50,13 +51,18 @@ div {
 }
 #nav-list a:hover {
   background: #77c9d4;
+  cursor: pointer;
 }
 #nav-list a span {
   font-size: 1.8em;
 }
 
+#instruction {
+  text-align: left;
+}
+
 /* Main page */
-#msgDiv, #lobby, #gamearea {
+#msgDiv, #lobby, #gamearea, #instruction {
   display: none;
 }
 
@@ -124,6 +130,8 @@ div {
   width: 140px;
   height: 140px;
   padding: 0;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
 }
 
 .float {

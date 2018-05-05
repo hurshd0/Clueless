@@ -20,8 +20,6 @@ var players = {"Miss Scarlet": {"id": 0, "position": [0, 3]},
 			"Mr Green": {"id": 4, "position": [4, 1]}, 
 			"Mrs White": {"id": 5, "position": [4, 3]}};
 var taken = {};
-// Holds the names chosen by the players
-var names = [];
 // Holds the answer to the mystery
 var secretEnvelope = null;
 // Keepks track of whose turn it is
@@ -76,15 +74,6 @@ io.on('connection', function(client) {
 		} else {
 			client.emit('joinError');
 		}
-	});
-
-	// A player has chosen a name
-    // Make sure that name is not already taken
-    // Receives the name that was chosen
-	client.on('checkName', function(data) {
-		client.emit('nameResponse', checkName(data));
-		names.push(data);
-		CLIENT_LIST[client.id].name = data;
 	});
 
 	// Mark game as started
@@ -217,6 +206,26 @@ io.on('connection', function(client) {
     	delete CLIENT_LIST[client.id];
     });
 
+    client.on('remove', function(data) {
+    	// If the client was playing the game
+    	if (PLAYER_LIST.includes(client.id)) {
+            PLAYER_LIST.splice(PLAYER_LIST.indexOf(client.id), 1);
+            client.broadcast.emit('playerCount', PLAYER_LIST.length);
+        }
+
+        if (PLAYER_LIST.length === 0) {
+        	gameStatus = 'Not Started';
+            client.broadcast.emit('gameStatus', gameStatus);
+        }
+
+        // If the game has been created and the player had
+        // already chosen a character, replace the character that was chosen
+    	if (client.character) {
+    		players[client.character] = taken[client.character];
+    		client.broadcast.emit('characters', players);
+    	}
+    });
+
     // Player-initiated action to leave the current game
     client.on("exitGame", function(data) {
         leaveGame(client.id, client.character, client.hand);
@@ -234,15 +243,6 @@ io.on('connection', function(client) {
 		client.emit('evalAns', res);
 	});
 });
-
-// Checks if a name is already taken
-function checkName(name) {
-	var idx = -1;
-	if (names.length > 0) {
-		idx = names.indexOf(name);
-	}
-	return {"idx": idx, "name": name};
-}
 
 // Checks if the game is ready to be started
 // The game can only be started once all the players
@@ -329,7 +329,6 @@ function resetGame() {
               "Mr Green": {"id": 4, "position": [4, 1]}, 
               "Mrs White": {"id": 5, "position": [4, 3]}};
     PLAYER_LIST = [];
-    names = [];
     secretEnvelope = null;
     currentTurn = null;
     others = null;

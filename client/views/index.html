@@ -7,6 +7,8 @@
 		<title>Clueless Game App</title>
 		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="/client/css/style.css">
+		<link href='https://fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
 	</head>
 
 	<body>
@@ -14,12 +16,12 @@
 			<nav id="header-nav" class="navbar navbar-default">
 				<div class="container">
 					<div class="navbar-header">
-						<a href="#" class="pull-left visible-md visible-lg">
+						<a class="pull-left visible-md visible-lg" onclick="displayHome()">
 							<div id="logo-img" alt="Logo image"></div>
 						</a>
 
 						<div class="navbar-brand">
-							<a href="#">
+							<a onclick="displayHome()">
 								<h1>ClueLess</h1>
 							</a>
 						</div>
@@ -34,15 +36,21 @@
 
 					<div id="collapsable-nav" class="collapse navbar-collapse">
 						<ul id="nav-list" class="nav navbar-nav navbar-right">
-							<li id="navHomeButton" class="visible-xs active">
-								<a href="#">
-									<span class="glyphicon glyphicon-home"></span> Home
+							<li>
+								<a onclick="displayHome()">
+									<span class="glyphicon glyphicon-home"></span><br class="hidden-xs"> Home
 								</a>
 							</li>
 
 							<li>
-								<a href="#">
-									<span class="glyphicon glyphicon-info-sign"></span><br class="hidden-xs"> Instructions
+								<a onclick="displayInstructions()">
+									<span class="glyphicon glyphicon-question-sign"></span><br class="hidden-xs"> Instructions
+								</a>
+							</li>
+
+							<li>
+								<a onclick="about()">
+									<span class="glyphicon glyphicon-info-sign"></span><br class="hidden-xs"> About
 								</a>
 							</li>
 						</ul>
@@ -51,7 +59,7 @@
 			</nav>
 		</header>
 
-		<div class="container">
+		<div class="container text-center">
 			<h3 class="text-center" id="gameStatus"></h3>
 			<!-- Main Page -->
 			<div id="main">
@@ -71,14 +79,81 @@
 			</div>
 			<!-- End Main Page -->
 
+			<!-- Instruction Page -->
+			<div id="instruction">
+				<h2 class="text-center">Instructions</h2>
+				<section>
+					<h4>Playing the game</h4>
+					<p>You must have 3 players ready to be able to start the game. If the number of players becomes less than 3 at any point during the game, the game will end.</p>
+				</section>
+
+				<section>
+					<h4>Moving around the gameboard</h4>
+					<p>You cannot move if it is not your turn</p>
+					<h6>When starting in a room, you may do one of the following</h6>
+					<ul>
+						<li>Move into a hallway if no player is occupying it and move into one of the accessible rooms</li>
+						<li>Take a secret passage to a diagonally opposite room if there is one</li>
+						<li>If you were moved to the room by a suggestion made by another player, you may decide to stay there</li>
+					</ul>
+					<h6>When starting in a hallway</h6>
+					<ul>
+						<li>Move to one of the 2 rooms accessible from the hallway</li>
+					</ul>
+					<p>If you cannot physically move your player from the current room they are in, due to blocked hallways, and you were not moved to your current room based on a suggestion, you simply lose your turn</p>
+					<p>Once you have moved into a room, you must make a suggestion or an accusation</p>
+				</section>
+				
+				<section>
+					<h4>Making a suggestion</h4>
+					<p>Make a suggestion by clicking the suggestion button. Choose a character and a weapon from the popup window then submit.</p>
+				</section>
+
+				<section>
+					<h4>Making an accusation</h4>
+					<p>Make an accusation by clicking the accusation button. Choose a character, a weapon, and a room from the popup window then submit.</p>
+					<h6>You can make an accusation in one of those situations:</h6>
+					<ul>
+						<li>It is your turn and you have moved or was recently moved into your current room.</li>
+						<li>You have made a suggestion and the other players were not able to prove it false.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h4>Proving a suggestion</h4>
+					<p>After a player has made a suggestion, you may get the option to disprove it. If you do, click on the prove button and select one option from the popup window then submit.</p>
+				</section>
+
+				<section>
+					<h4>Losing the game</h4>
+					<h6>You lose the game in any of those conditions:</h6>
+					<ul>
+						<li>Another player has solved the mystery. In this case, the gamed ends.</li>
+						<li>You have made an incorrect accusation. In this case, you may no longer take turn or move in the game. However, you will still be given the opportunity to disprove another player's suggestion.</li>
+						<li>None of the players were able to solve the mystery. In this case, the game ends</li>
+					</ul>
+				</section>
+
+				<section>
+					<h4>Winning the game</h4>
+					<p>You can win the game by solving the mystery with a correct accusation.</p>
+				</section>
+			</div>
+
 			<!-- Lobby Page -->
 			<div class="text-center" id="lobby">
 				<h4 class="text-center" id="playerCount"></h4>
-				<div id="playerInfo">
-					<input type="text" id="playerName" placeholder="Choose a name">
-					<button type="button" onclick="setName()">Submit</button>
-					<p id="nameErr"></p>
+				<hr>
+
+				<div id="character">
+					<h3 id="characterChoice"></h3>
+					<ul>
+						<li>When it is your turn, use the arrow keys to move your character to an adjacent room</li>
+						<li>Once there, you can make a suggestion or accusation</li>
+						<li>If you choose to accuse and your accusation is incorrect, you may no longer move in the game</li>
+					</ul>
 				</div>
+
 				<div class="text-center" id="character"></div>
 				<div id="characters">
 					<h4>Choose a character to join the game</h4>
