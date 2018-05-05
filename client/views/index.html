@@ -7,6 +7,8 @@
 		<title>Clueless Game App</title>
 		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="/client/css/style.css">
+		<link href='https://fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
 	</head>
 
 	<body>
@@ -42,7 +44,13 @@
 
 							<li>
 								<a href="#">
-									<span class="glyphicon glyphicon-info-sign"></span><br class="hidden-xs"> Instructions
+									<span class="glyphicon glyphicon-question-sign"></span><br class="hidden-xs"> Instructions
+								</a>
+							</li>
+
+							<li>
+								<a href="#">
+									<span class="glyphicon glyphicon-info-sign"></span><br class="hidden-xs"> About
 								</a>
 							</li>
 						</ul>
@@ -51,7 +59,7 @@
 			</nav>
 		</header>
 
-		<div class="container">
+		<div class="container text-center">
 			<h3 class="text-center" id="gameStatus"></h3>
 			<!-- Main Page -->
 			<div id="main">
@@ -74,11 +82,17 @@
 			<!-- Lobby Page -->
 			<div class="text-center" id="lobby">
 				<h4 class="text-center" id="playerCount"></h4>
-				<div id="playerInfo">
-					<input type="text" id="playerName" placeholder="Choose a name">
-					<button type="button" onclick="setName()">Submit</button>
-					<p id="nameErr"></p>
+				<hr>
+
+				<div id="character">
+					<h3 id="characterChoice"></h3>
+					<ul>
+						<li>When it is your turn, use the arrow keys to move your character to an adjacent room</li>
+						<li>Once there, you can make a suggestion or accusation</li>
+						<li>If you choose to accuse and your accusation is incorrect, you may no longer move in the game</li>
+					</ul>
 				</div>
+
 				<div class="text-center" id="character"></div>
 				<div id="characters">
 					<h4>Choose a character to join the game</h4>

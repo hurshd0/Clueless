@@ -86,21 +86,6 @@ function main() {
             document.getElementById('playerCount').innerHTML = data + "/6 players";
         });
 
-        socket.on('nameResponse', function(data) {
-        	var text;
-			if (data.idx === -1) {
-				if (data.name === "") {
-					text = "You did not choose a name";
-				} else {
-					text = "Your name is " + data.name;
-					playerInfo.name = data.name;
-				}
-				document.getElementById('playerInfo').innerHTML = "<h3 class='text-center'>" + text + "</h3>";
-			} else {
-				document.getElementById('nameErr').innerHTML = "This name is already taken";
-			}
-        });
-
         // A player is not able to join the game
         socket.on('joinError', function(data) {
             alert('Sorry. The game has already started. Redirecting to main page.');
@@ -354,11 +339,6 @@ function createGame() {
 	socket.emit('join');
 }
 
-function setName() {
-	var n = document.getElementById('playerName').value;
-	socket.emit('checkName', n);
-}
-
 function startGame() {
 	socket.emit('startGame');
 }
@@ -388,7 +368,7 @@ function returnToMain() {
 }
 
 function removeCharacter(id) {
-	var text = "Your character is: ";
+	var text = "You will be playing as ";
     switch(id) {
         case 0:
         	document.getElementById('character0').style.display = 'none';
@@ -433,7 +413,7 @@ function removeCharacter(id) {
             text += "Mrs White";
             break;
     }
-    document.getElementById("character").innerHTML = "<h3 class='text-center'>" + text + "</h3>";
+    document.getElementById("characterChoice").innerHTML = text;
     document.getElementById("character").style.display = 'block';
     document.getElementById("characters").style.display = 'none';
 }

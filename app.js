@@ -20,8 +20,6 @@ var players = {"Miss Scarlet": {"id": 0, "position": [0, 3]},
 			"Mr Green": {"id": 4, "position": [4, 1]}, 
 			"Mrs White": {"id": 5, "position": [4, 3]}};
 var taken = {};
-// Holds the names chosen by the players
-var names = [];
 // Holds the answer to the mystery
 var secretEnvelope = null;
 // Keepks track of whose turn it is
@@ -76,15 +74,6 @@ io.on('connection', function(client) {
 		} else {
 			client.emit('joinError');
 		}
-	});
-
-	// A player has chosen a name
-    // Make sure that name is not already taken
-    // Receives the name that was chosen
-	client.on('checkName', function(data) {
-		client.emit('nameResponse', checkName(data));
-		names.push(data);
-		CLIENT_LIST[client.id].name = data;
 	});
 
 	// Mark game as started
@@ -235,15 +224,6 @@ io.on('connection', function(client) {
 	});
 });
 
-// Checks if a name is already taken
-function checkName(name) {
-	var idx = -1;
-	if (names.length > 0) {
-		idx = names.indexOf(name);
-	}
-	return {"idx": idx, "name": name};
-}
-
 // Checks if the game is ready to be started
 // The game can only be started once all the players
 // currently in lobby have chosen a character
@@ -329,7 +309,6 @@ function resetGame() {
               "Mr Green": {"id": 4, "position": [4, 1]}, 
               "Mrs White": {"id": 5, "position": [4, 3]}};
     PLAYER_LIST = [];
-    names = [];
     secretEnvelope = null;
     currentTurn = null;
     others = null;
