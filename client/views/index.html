@@ -349,10 +349,8 @@
 
 				<div id="suggestionModal" class="modal">
 					<div class="modal-content">
-						<div class="modal-header">
-							<h4>Choose an option from each dropdown</h4>
-						</div>
-						<div class="modal-body">
+						<div>
+							<h4>Select a suspect</h4>
 							<select id="suspect1">
 								<option value="Miss Scarlet">Miss Scarlet</option>
 								<option value="Professor Plum">Professor Plum</option>
@@ -361,7 +359,10 @@
 								<option value="Mr Green">Mr Green</option>
 								<option value="Mrs White">Mrs White</option>
 							</select>
+						</div>
 
+						<div>
+							<h4>Select a weapon</h4>
 							<select id="weapon1">
 								<option value="Rope">Rope</option>
 								<option value="Lead Pipe">Lead Pipe</option>
@@ -370,20 +371,22 @@
 								<option value="Candlestick">Candlestick</option>
 								<option value="Revolver">Revolver</option>
 							</select>
+						</div>
 
+						<div>
+							<h4>Select a room</h4>
 							<select id="room1">
 							</select>
-							<button type="button" onclick="getSuggestion()">Submit</button>
 						</div>
+
+						<button type="button" onclick="getSuggestion()">Submit</button>
 					</div>
 				</div>
 
 				<div id="accusationModal" class="modal">
 					<div class="modal-content">
-						<div class="modal-header">
-							<h4>Choose an option from each dropdown</h4>
-						</div>
-						<div class="modal-body">
+						<div>
+							<h4>Select a suspect</h4>
 							<select id="suspect2">
 								<option value="Miss Scarlet">Miss Scarlet</option>
 								<option value="Professor Plum">Professor Plum</option>
@@ -392,7 +395,10 @@
 								<option value="Mr Green">Mr Green</option>
 								<option value="Mrs White">Mrs White</option>
 							</select>
+						</div>
 
+						<div>
+							<h4>Select a weapon</h4>
 							<select id="weapon2">
 								<option value="Rope">Rope</option>
 								<option value="Lead Pipe">Lead Pipe</option>
@@ -401,7 +407,10 @@
 								<option value="Candlestick">Candlestick</option>
 								<option value="Revolver">Revolver</option>
 							</select>
+						</div>
 
+						<div>
+							<h4>Select a room</h4>
 							<select id="room2">
 								<option value="Study">Study</option>
 								<option value="Hall">Hall</option>
@@ -413,19 +422,18 @@
 								<option value="BallroomKitchen">BallroomKitchen</option>
 								<option value="Kitchen">Kitchen</option>
 							</select>
-							<button type="button" onclick="getAccusation()">Submit</button>
 						</div>
+						<button type="button" onclick="getAccusation()">Submit</button>
 					</div>
 				</div>
 
 				<div class="modal" id="proofModal">
 					<div class="modal-content">
-						<div class="modal-body">
-							<select id="suggestionContent">
-								
-							</select>
-							<button type="button" onclick="getProof()">Submit</button>
+						<div>
+							<h4>Select an option</h4>
+							<select id="suggestionContent"></select>
 						</div>
+						<button type="button" onclick="getProof()">Submit</button>
 					</div>
 				</div>
 
