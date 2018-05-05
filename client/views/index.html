@@ -1,361 +1,535 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-    	<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Clueless Game App</title>
-		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-		<link rel="stylesheet" type="text/css" href="/client/css/style.css">
-	</head>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Clueless Game App</title>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/client/css/style.css">
+</head>
 
-	<body>
-		<header>
-			<nav id="header-nav" class="navbar navbar-default">
-				<div class="container">
-					<div class="navbar-header">
-						<a href="#" class="pull-left visible-md visible-lg">
-							<div id="logo-img" alt="Logo image"></div>
+<body>
+<header>
+	<nav id="header-nav" class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header">
+				<a href="#" class="pull-left visible-md visible-lg">
+					<div id="logo-img" alt="Logo image"></div>
+				</a>
+
+				<div class="navbar-brand">
+					<a href="#">
+						<h1>ClueLess</h1>
+					</a>
+				</div>
+
+				<button id="navbarToggle" type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapsable-nav">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			</div>
+
+			<div id="collapsable-nav" class="collapse navbar-collapse">
+				<ul id="nav-list" class="nav navbar-nav navbar-right">
+					<li id="navHomeButton" class="visible-xs active">
+						<a href="#">
+							<span class="glyphicon glyphicon-home"></span> Home
 						</a>
+					</li>
 
-						<div class="navbar-brand">
-							<a href="#">
-								<h1>ClueLess</h1>
-							</a>
-						</div>
+					<li>
+						<a href="#">
+							<span class="glyphicon glyphicon-info-sign"></span><br class="hidden-xs"> Instructions
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+</header>
 
-						<button id="navbarToggle" type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapsable-nav">
-							<span class="sr-only">Toggle navigation</span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
+<div class="container">
+	<h3 class="text-center" id="gameStatus"></h3>
+	<!-- Main Page -->
+	<div id="main">
+		<div class="jumbotron">
+			<p>JHU Software Engineering Class</p>
+			<hr>
+			<p>This is a modified version of the board game Clue. Full instructions can be found in the  <a href="#">instruction page</a></p>
+		</div>
+		<div class="text-center">
+			<div class="btn-group btn-group-lg" role="group" id='game'>
+				<button type="button" class="btn btn-success btn-start" onclick="createGame()" id="createBtn">New Game</button>
+			</div>
+			<div id="msgDiv">
+				A game is already in progress.
+			</div>
+		</div>
+	</div>
+	<!-- End Main Page -->
+
+	<!-- Lobby Page -->
+	<div class="text-center" id="lobby">
+		<h4 class="text-center" id="playerCount"></h4>
+		<div class="text-center" id="playerInfo">
+			<input type="text" id="playerName" placeholder="Choose a name">
+			<button type="button" onclick="setName()">Submit</button>
+			<p id="nameErr"></p>
+		</div>
+		<div class="text-center" id="character"></div>
+		<div id="characters">
+			<h4>Choose a character to join the game</h4>
+			<div class="left" onclick="removeCharacter(0)" id="character0"></div>
+			<div class="left" onclick="removeCharacter(1)" id="character1"></div>
+			<div class="left" onclick="removeCharacter(2)" id="character2"></div>
+			<div class="left" onclick="removeCharacter(3)" id="character3"></div>
+			<div class="left" onclick="removeCharacter(4)" id="character4"></div>
+			<div class="left" onclick="removeCharacter(5)" id="character5"></div>
+		</div>
+		<button type="button" class="btn btn-success btn-start" onclick="startGame()" id='startBtn' disabled>Start Game</button>
+	</div>
+	<!-- End Lobby Page -->
+
+	<!-- Game Area -->
+	<div id="gamearea">
+		<div class="row">
+			<div class="col-md-6" id="gameboard">
+				<div class='float sixteen room' id='study'>
+					<img class='pos1 img' id='study1' src=''>
+					<img class='pos2 img' id='study2' src=''>
+					<img src="" class="pos3 img" id="study3">
+					<img src="" class="pos4 img" id="study4">
+					<img src="" class="pos5 img" id="study5">
+					<img src="" class="pos6 img" id="study6">
+				</div>
+				<div class='float quarter'><img class='pos8 img' id='SH1' src=''></div>
+				<div class='float eighteen room' id='hall'>
+					<img class='pos1 img' id='hall1' src=''>
+					<img class='pos2 img' id='hall2' src=''>
+					<img src="" class="pos3 img" id="hall3">
+					<img src="" class="pos4 img" id="hall4">
+					<img src="" class="pos5 img" id="hall5">
+					<img src="" class="pos6 img" id="hall6">
+				</div>
+				<div class='float quarter'><img class='pos8 img' id='HL1' src=''></div>
+				<div class='float sixteen room' id='lounge'>
+					<img class='pos1 img' id='lounge1' src=''>
+					<img class='pos2 img' id='lounge2' src=''>
+					<img src="" class="pos3 img" id="lounge3">
+					<img src="" class="pos4 img" id="lounge4">
+					<img src="" class="pos5 img" id="lounge5">
+					<img src="" class="pos6 img" id="lounge6">
+				</div>
+				<div class='float vHallway1'><img class='pos7 img' id='SL1' src=''></div>
+				<div class='float vHallway2'><img class='pos7 img' id='HB1' src=''></div>
+				<div class='float vHallway3'><img class='pos7 img' id='LD1' src=''></div>
+				<div class='float sixteen room' id='library'>
+					<img class='pos1 img' id='library1' src=''>
+					<img class='pos2 img' id='library2' src=''>
+					<img src="" class="pos3 img" id="library3">
+					<img src="" class="pos4 img" id="library4">
+					<img src="" class="pos5 img" id="library5">
+					<img src="" class="pos6 img" id="library6">
+				</div>
+				<div class='float quarter'><img class='pos8 img' id='LB1' src=''></div>
+				<div class='float eighteen room' id='billiard'>
+					<img class='pos1 img' id='billiard1' src=''>
+					<img class='pos2 img' id='billiard2' src=''>
+					<img src="" class="pos3 img" id="billiard3">
+					<img src="" class="pos4 img" id="billiard4">
+					<img src="" class="pos5 img" id="billiard5">
+					<img src="" class="pos6 img" id="billiard6">
+				</div>
+				<div class='float quarter'><img class='pos8 img' id='BD1' src=''></div>
+				<div class='float sixteen room' id='dining'>
+					<img class='pos1 img' id='dining1' src=''>
+					<img class='pos2 img' id='dining2' src=''>
+					<img src="" class="pos3 img" id="dining3">
+					<img src="" class="pos4 img" id="dining4">
+					<img src="" class="pos5 img" id="dining5">
+					<img src="" class="pos6 img" id="dining6">
+				</div>
+				<div class='float vHallway1'><img class='pos7 img' id='LC1' src=''></div>
+				<div class='float vHallway2'><img class='pos7 img' id='BB1' src=''></div>
+				<div class='float vHallway3'><img class='pos7 img' id='DK1' src=''></div>
+				<div class='float sixteen room' id='conservatory'>
+					<img class='pos1 img' id='conservatory1' src=''>
+					<img class='pos2 img' id='conservatory2' src=''>
+					<img src="" class="pos3 img" id="conservatory3">
+					<img src="" class="pos4 img" id="conservatory4">
+					<img src="" class="pos5 img" id="conservatory5">
+					<img src="" class="pos6 img" id="conservatory6">
+				</div>
+				<div class='float quarter'><img class='pos8 img' id='CB1' src=''></div>
+				<div class='float eighteen room' id='ballroom'>
+					<img class='pos1 img' id='ballroom1' src=''>
+					<img class='pos2 img' id='ballroom2' src=''>
+					<img src="" class="pos3 img" id="ballroom3">
+					<img src="" class="pos4 img" id="ballroom4">
+					<img src="" class="pos5 img" id="ballroom5">
+					<img src="" class="pos6 img" id="ballroom6">
+				</div>
+				<div class='float quarter'><img class='pos8 img' id='BK1' src=''></div>
+				<div class='float sixteen room' id='kitchen'>
+					<img class='pos1 img' id='kitchen1' src=''>
+					<img class='pos2 img' id='kitchen2' src=''>
+					<img src="" class="pos3 img" id="kitchen3">
+					<img src="" class="pos4 img" id="kitchen4">
+					<img src="" class="pos5 img" id="kitchen5">
+					<img src="" class="pos6 img" id="kitchen6">
+				</div>
+
+				<div class="btn-toolbar" role="toolbar" aria-label="..." id="buttons">
+					<div class="btn-group" role="group" aria-label="...">
+						<button type="button" class="btn btn-primary">
+							<span class="glyphicon glyphicon-arrow-left" aria-hidden="true" onclick="movePlayer('left')"></span>
+						</button>
+						<button type="button" class="btn btn-primary">
+							<span class="glyphicon glyphicon-arrow-right" aria-hidden="true" onclick="movePlayer('right')"></span>
+						</button>
+						<button type="button" class="btn btn-primary">
+							<span class="glyphicon glyphicon-arrow-up" aria-hidden="true" onclick="movePlayer('up')"></span>
+						</button>
+						<button type="button" class="btn btn-primary">
+							<span class="glyphicon glyphicon-arrow-down" aria-hidden="true" onclick="movePlayer('down')"></span>
 						</button>
 					</div>
 
-					<div id="collapsable-nav" class="collapse navbar-collapse">
-						<ul id="nav-list" class="nav navbar-nav navbar-right">
-							<li id="navHomeButton" class="visible-xs active">
-								<a href="#">
-									<span class="glyphicon glyphicon-home"></span> Home
-								</a>
-							</li>
-
-							<li>
-								<a href="#">
-									<span class="glyphicon glyphicon-info-sign"></span><br class="hidden-xs"> Instructions
-								</a>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</nav>
-		</header>
-
-		<div class="container">
-			<h3 class="text-center" id="gameStatus"></h3>
-			<!-- Main Page -->
-			<div id="main">
-				<div class="jumbotron">
-					<p>JHU Software Engineering Class</p>
-					<hr>
-					<p>This is a modified version of the board game Clue. Full instructions can be found in the  <a href="#">instruction page</a></p>
-				</div>
-				<div class="text-center">
-					<div class="btn-group btn-group-lg" role="group" id='game'>
-						<button type="button" class="btn btn-success btn-start" onclick="createGame()" id="createBtn">New Game</button>
-					</div>
-					<div id="msgDiv">
-						A game is already in progress.
-					</div>
-				</div>
-			</div>
-			<!-- End Main Page -->
-
-			<!-- Lobby Page -->
-			<div class="text-center" id="lobby">
-				<h4 class="text-center" id="playerCount"></h4>
-				<div id="playerInfo">
-					<input type="text" id="playerName" placeholder="Choose a name">
-					<button type="button" onclick="setName()">Submit</button>
-					<p id="nameErr"></p>
-				</div>
-				<div class="text-center" id="character"></div>
-				<div id="characters">
-					<h4>Choose a character to join the game</h4>
-					<div class="left" onclick="removeCharacter(0)" id="character0"></div>
-					<div class="left" onclick="removeCharacter(1)" id="character1"></div>
-					<div class="left" onclick="removeCharacter(2)" id="character2"></div>
-					<div class="left" onclick="removeCharacter(3)" id="character3"></div>
-					<div class="left" onclick="removeCharacter(4)" id="character4"></div>
-					<div class="left" onclick="removeCharacter(5)" id="character5"></div>
-				</div>
-				<button type="button" class="btn btn-success btn-start" onclick="startGame()" id='startBtn' disabled>Start Game</button>
-			</div>
-			<!-- End Lobby Page -->
-
-			<!-- Game Area -->
-			<div id="gamearea">
-				<div class="row">
-					<div class="col-md-6" id="gameboard">
-						<div class='float sixteen room' id='study'>
-							<img class='pos1 img' id='study1' src=''>
-							<img class='pos2 img' id='study2' src=''>
-							<img src="" class="pos3 img" id="study3">
-							<img src="" class="pos4 img" id="study4">
-							<img src="" class="pos5 img" id="study5">
-							<img src="" class="pos6 img" id="study6">
-						</div>
-						<div class='float quarter'><img class='pos8 img' id='SH1' src=''></div>
-						<div class='float eighteen room' id='hall'>
-							<img class='pos1 img' id='hall1' src=''>
-							<img class='pos2 img' id='hall2' src=''>
-							<img src="" class="pos3 img" id="hall3">
-							<img src="" class="pos4 img" id="hall4">
-							<img src="" class="pos5 img" id="hall5">
-							<img src="" class="pos6 img" id="hall6">
-						</div>
-						<div class='float quarter'><img class='pos8 img' id='HL1' src=''></div>
-						<div class='float sixteen room' id='lounge'>
-							<img class='pos1 img' id='lounge1' src=''>
-							<img class='pos2 img' id='lounge2' src=''>
-							<img src="" class="pos3 img" id="lounge3">
-							<img src="" class="pos4 img" id="lounge4">
-							<img src="" class="pos5 img" id="lounge5">
-							<img src="" class="pos6 img" id="lounge6">
-						</div>
-						<div class='float vHallway1'><img class='pos7 img' id='SL1' src=''></div>
-						<div class='float vHallway2'><img class='pos7 img' id='HB1' src=''></div>
-						<div class='float vHallway3'><img class='pos7 img' id='LD1' src=''></div>
-						<div class='float sixteen room' id='library'>
-							<img class='pos1 img' id='library1' src=''>
-							<img class='pos2 img' id='library2' src=''>
-							<img src="" class="pos3 img" id="library3">
-							<img src="" class="pos4 img" id="library4">
-							<img src="" class="pos5 img" id="library5">
-							<img src="" class="pos6 img" id="library6">
-						</div>
-						<div class='float quarter'><img class='pos8 img' id='LB1' src=''></div>
-						<div class='float eighteen room' id='billiard'>
-							<img class='pos1 img' id='billiard1' src=''>
-							<img class='pos2 img' id='billiard2' src=''>
-							<img src="" class="pos3 img" id="billiard3">
-							<img src="" class="pos4 img" id="billiard4">
-							<img src="" class="pos5 img" id="billiard5">
-							<img src="" class="pos6 img" id="billiard6">
-						</div>
-						<div class='float quarter'><img class='pos8 img' id='BD1' src=''></div>
-						<div class='float sixteen room' id='dining'>
-							<img class='pos1 img' id='dining1' src=''>
-							<img class='pos2 img' id='dining2' src=''>
-							<img src="" class="pos3 img" id="dining3">
-							<img src="" class="pos4 img" id="dining4">
-							<img src="" class="pos5 img" id="dining5">
-							<img src="" class="pos6 img" id="dining6">
-						</div>
-						<div class='float vHallway1'><img class='pos7 img' id='LC1' src=''></div>
-						<div class='float vHallway2'><img class='pos7 img' id='BB1' src=''></div>
-						<div class='float vHallway3'><img class='pos7 img' id='DK1' src=''></div>
-						<div class='float sixteen room' id='conservatory'>
-							<img class='pos1 img' id='conservatory1' src=''>
-							<img class='pos2 img' id='conservatory2' src=''>
-							<img src="" class="pos3 img" id="conservatory3">
-							<img src="" class="pos4 img" id="conservatory4">
-							<img src="" class="pos5 img" id="conservatory5">
-							<img src="" class="pos6 img" id="conservatory6">
-						</div>
-						<div class='float quarter'><img class='pos8 img' id='CB1' src=''></div>
-						<div class='float eighteen room' id='ballroom'>
-							<img class='pos1 img' id='ballroom1' src=''>
-							<img class='pos2 img' id='ballroom2' src=''>
-							<img src="" class="pos3 img" id="ballroom3">
-							<img src="" class="pos4 img" id="ballroom4">
-							<img src="" class="pos5 img" id="ballroom5">
-							<img src="" class="pos6 img" id="ballroom6">
-						</div>
-						<div class='float quarter'><img class='pos8 img' id='BK1' src=''></div>
-						<div class='float sixteen room' id='kitchen'>
-							<img class='pos1 img' id='kitchen1' src=''>
-							<img class='pos2 img' id='kitchen2' src=''>
-							<img src="" class="pos3 img" id="kitchen3">
-							<img src="" class="pos4 img" id="kitchen4">
-							<img src="" class="pos5 img" id="kitchen5">
-							<img src="" class="pos6 img" id="kitchen6">
-						</div>
-
-						<div class="btn-toolbar" role="toolbar" aria-label="..." id="buttons">
-				    		<div class="btn-group" role="group" aria-label="...">
-				        		<button type="button" class="btn btn-primary">
-				            		<span class="glyphicon glyphicon-arrow-left" aria-hidden="true" onclick="movePlayer('left')"></span>
-				        		</button>
-				        		<button type="button" class="btn btn-primary">
-				            		<span class="glyphicon glyphicon-arrow-right" aria-hidden="true" onclick="movePlayer('right')"></span>
-				        		</button>
-				        		<button type="button" class="btn btn-primary">
-				            		<span class="glyphicon glyphicon-arrow-up" aria-hidden="true" onclick="movePlayer('up')"></span>
-				        		</button>
-				        		<button type="button" class="btn btn-primary">
-				            		<span class="glyphicon glyphicon-arrow-down" aria-hidden="true" onclick="movePlayer('down')"></span>
-				        		</button>
-				    		</div>
-
-				    		<div class="btn-group" role="group" aria-label="..." >
-				        		<button type="button" class="btn btn-info" onclick="movePlayer('secret')">Secret Passage</button>
-				    		</div>
-
-				    		<div class="btn-group" role="group" aria-label="...">
-				        		<button type="button" class="btn btn-info" onclick="makeSuggestion()" id="suggestion" disabled>Suggestion</button>
-				    		</div>
-
-				    		<div class="btn-group" role="group" aria-label="...">
-				        		<button type="button" class="btn btn-danger" onclick="makeAccusation()" id="accusation" disabled>Accusation</button>
-				    		</div>
-
-				    		<div class="btn-group" role="group" aria-label="...">
-				        		<button type="button" class="btn btn-warning" id="endTurnBtn" onclick="endTurn()" disabled>End Turn</button>
-				    		</div>
-
-				    		<div class="btn-group" role="group" aria-label="...">
-				        		<button type="button" class="btn btn-warning" onclick="prove()" id="proveBtn" disabled>Prove</button>
-				    		</div>
-
-				    		<div class="btn-group" role="group" aria-label="...">
-				        		<button type="button" class="btn btn-warning" onclick="exitGame()">Exit Game</button>
-				    		</div>
-
-				    		<div class="btn-group" role="group" aria-label="...">
-				        		<button type="button" class="btn btn-warning" onclick="endGame()">End Game</button>
-				    		</div>
-						</div>
-
+					<div class="btn-group" role="group" aria-label="..." >
+						<button type="button" class="btn btn-info" onclick="movePlayer('secret')">Secret Passage</button>
 					</div>
 
-					<div class="col-md-3" id="gameInfo">
-						<div id="firstRow">
-							<div id="myPlayer" class="info text-center">
-								<h6>My character</h4>
-								<img src="" id="myImg">
-								<h6 id="myCharacter"></h6>
-							</div>
-							<div class="info text-center">
-								<h6>Current turn</h6>
-								<img src="" id="playerImg">
-								<h6 id="turn"></h6>
-							</div>
-							<div class="info"></div>
-						</div>
-						
-						<div id="myCards"></div>
-						<div id="activityLog"></div>
-						<div id="chatWindow"></div>
-
-						<form id="chatForm">
-							<input type="text" name="chat" id="chatInput">
-						</form>
+					<div class="btn-group" role="group" aria-label="...">
+						<button type="button" class="btn btn-info" onclick="makeSuggestion()" id="suggestion" disabled>Suggestion</button>
 					</div>
 
-					<div class="col-md-3" id="note">
-						
-					</div>	
-				</div>
-
-				<div id="suggestionModal" class="modal">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h4>Choose an option from each dropdown</h4>
-						</div>
-						<div class="modal-body">
-							<select id="suspect1">
-								<option value="Miss Scarlet">Miss Scarlet</option>
-								<option value="Professor Plum">Professor Plum</option>
-								<option value="Colonel Mustard">Colonel Mustard</option>
-								<option value="Mrs Peacock">Mrs Peacock</option>
-								<option value="Mr Green">Mr Green</option>
-								<option value="Mrs White">Mrs White</option>
-							</select>
-
-							<select id="weapon1">
-								<option value="Rope">Rope</option>
-								<option value="Lead Pipe">Lead Pipe</option>
-								<option value="Knife">Knife</option>
-								<option value="Wrench">Wrench</option>
-								<option value="Candlestick">Candlestick</option>
-								<option value="Revolver">Revolver</option>
-							</select>
-
-							<select id="room1">
-							</select>
-							<button type="button" onclick="getSuggestion()">Submit</button>
-						</div>
+					<div class="btn-group" role="group" aria-label="...">
+						<button type="button" class="btn btn-danger" onclick="makeAccusation()" id="accusation" disabled>Accusation</button>
 					</div>
-				</div>
 
-				<div id="accusationModal" class="modal">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h4>Choose an option from each dropdown</h4>
-						</div>
-						<div class="modal-body">
-							<select id="suspect2">
-								<option value="Miss Scarlet">Miss Scarlet</option>
-								<option value="Professor Plum">Professor Plum</option>
-								<option value="Colonel Mustard">Colonel Mustard</option>
-								<option value="Mrs Peacock">Mrs Peacock</option>
-								<option value="Mr Green">Mr Green</option>
-								<option value="Mrs White">Mrs White</option>
-							</select>
-
-							<select id="weapon2">
-								<option value="Rope">Rope</option>
-								<option value="Lead Pipe">Lead Pipe</option>
-								<option value="Knife">Knife</option>
-								<option value="Wrench">Wrench</option>
-								<option value="Candlestick">Candlestick</option>
-								<option value="Revolver">Revolver</option>
-							</select>
-
-							<select id="room2">
-								<option value="Study">Study</option>
-								<option value="Hall">Hall</option>
-								<option value="Lounge">Lounge</option>
-								<option value="Library">Library</option>
-								<option value="Billiard Room">Billiard Room</option>
-								<option value="Dining Room">Dining Room</option>
-								<option value="Conservatory">Conservatory</option>
-								<option value="BallroomKitchen">BallroomKitchen</option>
-								<option value="Kitchen">Kitchen</option>
-							</select>
-							<button type="button" onclick="getAccusation()">Submit</button>
-						</div>
+					<div class="btn-group" role="group" aria-label="...">
+						<button type="button" class="btn btn-warning" id="endTurnBtn" onclick="endTurn()" disabled>End Turn</button>
 					</div>
-				</div>
 
-				<div class="modal" id="proofModal">
-					<div class="modal-content">
-						<div class="modal-body">
-							<select id="suggestionContent">
-								
-							</select>
-							<button type="button" onclick="getProof()">Submit</button>
-						</div>
+					<div class="btn-group" role="group" aria-label="...">
+						<button type="button" class="btn btn-warning" onclick="prove()" id="proveBtn" disabled>Prove</button>
+					</div>
+
+					<div class="btn-group" role="group" aria-label="...">
+						<button type="button" class="btn btn-warning" onclick="exitGame()">Exit Game</button>
+					</div>
+
+					<div class="btn-group" role="group" aria-label="...">
+						<button type="button" class="btn btn-warning" onclick="endGame()">End Game</button>
 					</div>
 				</div>
 
 			</div>
-			<!-- End Game Area -->
+
+			<div class="col-md-3" id="gameInfo">
+				<div>
+					<div id="myPlayer" class="col-md-6 info text-center lightBackground">
+						<h6>My character</h6>
+						<img src="" id="myImg">
+						<h6 id="myCharacter"></h6>
+					</div>
+					<div class="col-md-6 info text-center lightBackground">
+						<h6>Current turn</h6>
+						<img src="" id="playerImg">
+						<h6 id="turn"></h6>
+					</div>
+				</div>
+
+				<div class="actionWindow lightBackground">
+					<div class="text-center">My Cards</div>
+					<div id="myCards"></div>
+
+					<div class="text-center">Activity Log</div>
+					<div id="activityLog"></div>
+
+					<div class="text-center">Game Chat</div>
+					<div id="chatWindow"></div>
+					<form id="chatForm">
+						<input type="text" name="chat" id="chatInput" placeholder="Enter message here...">
+					</form>
+				</div>
+
+			</div>
+
+			<div class="col-md-3 lightBackground" id="note">
+				<div>
+					<table width="100%">
+						<tr>
+							<td colspan="5" class="text-center">
+								Suspects
+							</td>
+						</tr>
+						<tr>
+							<td>Rev. Green</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Prof. Plum</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Col. Mustard</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Mrs. Peacock</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Ms. Scarlet</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Mrs. White</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+					</table>
+				</div>
+<hr>
+				<div>
+					<table width="100%">
+						<tr>
+							<td colspan="5" class="text-center">
+								Weapons
+							</td>
+						</tr>
+						<tr>
+							<td>Candlestick</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Knife</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Lead Pipe</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Revolver</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Rope</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Wrench</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+					</table>
+				</div>
+<hr>
+				<div>
+					<table width="100%">
+						<tr>
+							<td colspan="5" class="text-center">
+								Rooms
+							</td>
+						</tr>
+						<tr>
+							<td>Conservatory</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Lounge</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Kitchen</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Library</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Hall</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Study</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Dining Room</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+						<tr>
+							<td>Billiard Room</td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+							<td><input type="checkbox"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
 		</div>
 
+		<div id="suggestionModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4>Choose an option from each dropdown</h4>
+				</div>
+				<div class="modal-body">
+					<select id="suspect1">
+						<option value="Miss Scarlet">Miss Scarlet</option>
+						<option value="Professor Plum">Professor Plum</option>
+						<option value="Colonel Mustard">Colonel Mustard</option>
+						<option value="Mrs Peacock">Mrs Peacock</option>
+						<option value="Mr Green">Mr Green</option>
+						<option value="Mrs White">Mrs White</option>
+					</select>
 
-		<!-- Libs -->
-		<script type="text/javascript" src="/node_modules/socket.io-client/dist/socket.io.js"></script>
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-		<script type="text/javascript" src="//unpkg.com/@uirouter/angularjs/release/angular-ui-router.min.js"></script>
+					<select id="weapon1">
+						<option value="Rope">Rope</option>
+						<option value="Lead Pipe">Lead Pipe</option>
+						<option value="Knife">Knife</option>
+						<option value="Wrench">Wrench</option>
+						<option value="Candlestick">Candlestick</option>
+						<option value="Revolver">Revolver</option>
+					</select>
 
-		<!-- JS files -->
-		<script type="text/javascript" src="/client/js/player.js"></script>
-		<script type="text/javascript" src="/client/js/card.js"></script>
-		<script type="text/javascript" src="/client/js/board.js"></script>
-		<script type="text/javascript" src="/client/js/client.js"></script>
-	</body>
+					<select id="room1">
+					</select>
+					<button type="button" onclick="getSuggestion()">Submit</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="accusationModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4>Choose an option from each dropdown</h4>
+				</div>
+				<div class="modal-body">
+					<select id="suspect2">
+						<option value="Miss Scarlet">Miss Scarlet</option>
+						<option value="Professor Plum">Professor Plum</option>
+						<option value="Colonel Mustard">Colonel Mustard</option>
+						<option value="Mrs Peacock">Mrs Peacock</option>
+						<option value="Mr Green">Mr Green</option>
+						<option value="Mrs White">Mrs White</option>
+					</select>
+
+					<select id="weapon2">
+						<option value="Rope">Rope</option>
+						<option value="Lead Pipe">Lead Pipe</option>
+						<option value="Knife">Knife</option>
+						<option value="Wrench">Wrench</option>
+						<option value="Candlestick">Candlestick</option>
+						<option value="Revolver">Revolver</option>
+					</select>
+
+					<select id="room2">
+						<option value="Study">Study</option>
+						<option value="Hall">Hall</option>
+						<option value="Lounge">Lounge</option>
+						<option value="Library">Library</option>
+						<option value="Billiard Room">Billiard Room</option>
+						<option value="Dining Room">Dining Room</option>
+						<option value="Conservatory">Conservatory</option>
+						<option value="BallroomKitchen">BallroomKitchen</option>
+						<option value="Kitchen">Kitchen</option>
+					</select>
+					<button type="button" onclick="getAccusation()">Submit</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal" id="proofModal">
+			<div class="modal-content">
+				<div class="modal-body">
+					<select id="suggestionContent">
+
+					</select>
+					<button type="button" onclick="getProof()">Submit</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- End Game Area -->
+</div>
+
+
+<!-- Libs -->
+<script type="text/javascript" src="/node_modules/socket.io-client/dist/socket.io.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script type="text/javascript" src="//unpkg.com/@uirouter/angularjs/release/angular-ui-router.min.js"></script>
+
+<!-- JS files -->
+<script type="text/javascript" src="/client/js/player.js"></script>
+<script type="text/javascript" src="/client/js/card.js"></script>
+<script type="text/javascript" src="/client/js/board.js"></script>
+<script type="text/javascript" src="/client/js/client.js"></script>
+</body>
 </html>

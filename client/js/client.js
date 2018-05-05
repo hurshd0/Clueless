@@ -354,7 +354,7 @@ main();
 
 function createGame() {
 	document.getElementById('main').style.display = 'none';
-	document.getElementById('lobby').style.display = 'inline-block';
+	document.getElementById('lobby').style.display = 'grid';
 	socket.emit('join');
 }
 
