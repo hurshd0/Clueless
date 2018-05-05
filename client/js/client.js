@@ -355,6 +355,7 @@ function displayInstructions() {
     document.getElementById('lobby').style.display = 'none';
     document.getElementById("character").style.display = 'none';
     document.getElementById('gamearea').style.display = 'none';
+    document.getElementById('about').style.display = 'none';
     socket.emit('remove');
 }
 
@@ -364,6 +365,17 @@ function displayHome() {
     document.getElementById('lobby').style.display = 'none';
     document.getElementById("character").style.display = 'none';
     document.getElementById('gamearea').style.display = 'none';
+    document.getElementById('about').style.display = 'none';
+    socket.emit('remove');
+}
+
+function about() {
+    document.getElementById('instruction').style.display = 'none';
+    document.getElementById('main').style.display = 'none';
+    document.getElementById('lobby').style.display = 'none';
+    document.getElementById("character").style.display = 'none';
+    document.getElementById('gamearea').style.display = 'none';
+    document.getElementById('about').style.display = 'inline-block';
     socket.emit('remove');
 }
 
@@ -386,6 +398,7 @@ function returnToMain() {
     document.getElementById('lobby').style.display = 'none';
     document.getElementById("character").style.display = 'none';
     document.getElementById('instruction').style.display = 'none';
+    document.getElementById('about').style.display = 'none';
     document.getElementById('startBtn').disabled = true;
     document.getElementById('chatWindow').innerHTML = "";
     document.getElementById('activityLog').innerHTML = "";
