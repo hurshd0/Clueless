@@ -206,6 +206,26 @@ io.on('connection', function(client) {
     	delete CLIENT_LIST[client.id];
     });
 
+    client.on('remove', function(data) {
+    	// If the client was playing the game
+    	if (PLAYER_LIST.includes(client.id)) {
+            PLAYER_LIST.splice(PLAYER_LIST.indexOf(client.id), 1);
+            client.broadcast.emit('playerCount', PLAYER_LIST.length);
+        }
+
+        if (PLAYER_LIST.length === 0) {
+        	gameStatus = 'Not Started';
+            client.broadcast.emit('gameStatus', gameStatus);
+        }
+
+        // If the game has been created and the player had
+        // already chosen a character, replace the character that was chosen
+    	if (client.character) {
+    		players[client.character] = taken[client.character];
+    		client.broadcast.emit('characters', players);
+    	}
+    });
+
     // Player-initiated action to leave the current game
     client.on("exitGame", function(data) {
         leaveGame(client.id, client.character, client.hand);

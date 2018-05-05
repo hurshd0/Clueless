@@ -106,6 +106,7 @@ function main() {
         socket.on('drawboard', function(data) {
         	document.getElementById('lobby').style.display = 'none';
             document.getElementById("character").style.display = 'none';
+            document.getElementById('instruction').style.display = 'none';
         	document.getElementById('gamearea').style.display = 'inline-block';
         	// Create a new player object and set it to be an active player
             myPlayer = new Player(playerInfo.id, playerInfo.name, playerInfo.character, playerInfo.position);
@@ -335,12 +336,31 @@ main();
 
 function createGame() {
 	document.getElementById('main').style.display = 'none';
+    document.getElementById('instruction').style.display = 'none';
 	document.getElementById('lobby').style.display = 'inline-block';
 	socket.emit('join');
 }
 
 function startGame() {
 	socket.emit('startGame');
+}
+
+function displayInstructions() {
+    document.getElementById('instruction').style.display = 'inline-block';
+    document.getElementById('main').style.display = 'none';
+    document.getElementById('lobby').style.display = 'none';
+    document.getElementById("character").style.display = 'none';
+    document.getElementById('gamearea').style.display = 'none';
+    socket.emit('remove');
+}
+
+function displayHome() {
+    document.getElementById('instruction').style.display = 'none';
+    document.getElementById('main').style.display = 'inline-block';
+    document.getElementById('lobby').style.display = 'none';
+    document.getElementById("character").style.display = 'none';
+    document.getElementById('gamearea').style.display = 'none';
+    socket.emit('remove');
 }
 
 function resetGame() {
@@ -361,6 +381,7 @@ function returnToMain() {
     document.getElementById('gamearea').style.display = 'none';
     document.getElementById('lobby').style.display = 'none';
     document.getElementById("character").style.display = 'none';
+    document.getElementById('instruction').style.display = 'none';
     document.getElementById('startBtn').disabled = true;
     document.getElementById('chatWindow').innerHTML = "";
     document.getElementById('activityLog').innerHTML = "";
@@ -472,7 +493,7 @@ function movePlayer(dir) {
 	if (myPlayer !== null) {
 		var newPosition, isvalid = [], msg = '';
 		if (!myPlayer.isActive) {
-			alert("You may no longer move in the game");
+			alert("You have lost the game");
 		} else if (!myPlayer.isTurn) {
 			alert("It is not your turn");
 		} else {

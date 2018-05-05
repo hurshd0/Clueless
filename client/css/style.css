@@ -39,6 +39,7 @@ div {
 }
 .navbar-brand a:hover, .navbar-brand a:focus, #home a:hover {
   text-decoration: none;
+  cursor: pointer;
 }
 
 #nav-list {
@@ -50,13 +51,18 @@ div {
 }
 #nav-list a:hover {
   background: #77c9d4;
+  cursor: pointer;
 }
 #nav-list a span {
   font-size: 1.8em;
 }
 
+#instruction {
+  text-align: left;
+}
+
 /* Main page */
-#msgDiv, #lobby, #gamearea {
+#msgDiv, #lobby, #gamearea, #instruction {
   display: none;
 }
 
