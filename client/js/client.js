@@ -165,7 +165,7 @@ function main() {
         	}
     		currSuggestion = [data.suggestion[0].suspect, data.suggestion[0].weapon, data.suggestion[0].room];
         	document.getElementById('activityLog').innerHTML += "<div>" + data.name + " suggests " + data.suggestion[0].suspect + " with " +
-                data.suggestion[0].weapon + " in " + data.suggestion[0].room + "</div>";
+				data.suggestion[0].weapon + " in " + data.suggestion[0].room + "</div>";
         	gameboard.placeCharacters();
         });
 
@@ -287,17 +287,21 @@ function main() {
         });
 
         socket.on('receiveMessage', function(data){
+        	var element = document.getElementById('chatWindow');
         	if (data.player) {
-        		document.getElementById('chatWindow').innerHTML += "<div>" + data.player + ": " + data.message + "</div>";
+        		element.innerHTML += "<div>" + data.player + ": " + data.message + "</div>";
         	} else {
-        		document.getElementById('chatWindow').innerHTML += "<div>" + data + "</div>";
+        		element.innerHTML += "<div>" + data + "</div>";
         	}
+            element.scrollTop = element.scrollHeight;
         });
 
         // Receive a card and add to player's hand
         socket.on('addCard', function(data) {
             myPlayer.hand.push(data);
-            document.getElementById('activityLog').innerHTML += "<div> You now have " + data.name + " in your card list</div>"
+            var element = document.getElementById('activityLog');
+            element.innerHTML += "<div> You now have " + data.name + " in your card list</div>";
+            element.scrollTop = element.scrollHeight;
             myCards.innerHTML += "<div>" + data.name + "</div>";
         });
 
@@ -322,12 +326,12 @@ function main() {
 		chatForm.onsubmit = function(e) {
 			e.preventDefault();
 			if(chatInput.value[0] === '/') {	// For debugging server side
-				socket.emit('evalServer', chatInput.value.slice(1));;
+				socket.emit('evalServer', chatInput.value.slice(1));
 			} else {
 				socket.emit('sendMessage', {player: myPlayer.character, message: chatInput.value});
 			}
 			chatInput.value = '';
-		}
+		};
 
         document.onkeydown = function(event) {
 			if(event.keyCode === 39) {			// right arrow
