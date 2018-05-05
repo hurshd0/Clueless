@@ -314,7 +314,7 @@ function main() {
         socket.on('insufficient', function(data) {
         	document.getElementById('chatWindow').innerHTML += "<div>There's not enough players to continue playing.</div>";
         	resetGame();
-        	alert('The game has been reset due to insufficent players. Redirecting to main page');
+        	alert('The game has been reset due to insufficient players. Redirecting to main page');
         	returnToMain();
         });
 
