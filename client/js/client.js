@@ -59,7 +59,7 @@ function newConnection() {
 
 			socket.on('newPlayer', function(data) {
 				document.getElementById('playerCount').innerHTML = data.count + "/6 players";
-				playerInfo.id = data.id
+				playerInfo.id = data.id;
                 displayCharacters(data.characters);
                 resolve();
 			});
@@ -73,6 +73,7 @@ function main() {
 			if (data === 'Started') {
                 document.getElementById('game').style.display = 'none';
                 document.getElementById('msgDiv').style.display = 'inline-block';
+                document.getElementById('gameStatus').style.display = 'none';
             } else if (data === 'Created') {
                 document.getElementById('createBtn').innerHTML = 'Join Game';
             } else {

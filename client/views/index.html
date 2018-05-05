@@ -318,33 +318,208 @@
 
 					</div>
 
-					<div class="col-md-3" id="gameInfo">
-						<div id="firstRow">
-							<div id="myPlayer" class="info text-center">
-								<h6>My character</h4>
-								<img src="" id="myImg">
-								<h6 id="myCharacter"></h6>
-							</div>
-							<div class="info text-center">
-								<h6>Current turn</h6>
-								<img src="" id="playerImg">
-								<h6 id="turn"></h6>
-							</div>
-							<div class="info"></div>
-						</div>
-						
-						<div id="myCards"></div>
-						<div id="activityLog"></div>
-						<div id="chatWindow"></div>
+                    <div class="col-md-3" id="gameInfo">
+                        <div>
+                            <div id="myPlayer" class="col-md-6 info text-center lightBackground">
+                                <h6>My character</h6>
+                                <img src="" id="myImg">
+                                <h6 id="myCharacter"></h6>
+                            </div>
+                            <div class="col-md-6 info text-center lightBackground">
+                                <h6>Current turn</h6>
+                                <img src="" id="playerImg">
+                                <h6 id="turn"></h6>
+                            </div>
+                        </div>
 
-						<form id="chatForm">
-							<input type="text" name="chat" id="chatInput">
-						</form>
-					</div>
+                        <div class="actionWindow lightBackground">
+                            <div class="text-center">My Cards</div>
+                            <div id="myCards"></div>
 
-					<div class="col-md-3" id="note">
-						
-					</div>	
+                            <div class="text-center">Activity Log</div>
+                            <div id="activityLog"></div>
+
+                            <div class="text-center">Game Chat</div>
+                            <div id="chatWindow"></div>
+                            <form id="chatForm">
+                                <input type="text" name="chat" id="chatInput" placeholder="Enter message here...">
+                            </form>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-3 lightBackground" id="note">
+                        <div>
+                            <table width="100%">
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        Suspects
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Rev. Green</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Prof. Plum</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Col. Mustard</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Mrs. Peacock</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Ms. Scarlet</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Mrs. White</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <hr>
+                        <div>
+                            <table width="100%">
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        Weapons
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Candlestick</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Knife</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Lead Pipe</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Revolver</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Rope</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Wrench</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <hr>
+                        <div>
+                            <table width="100%">
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        Rooms
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Conservatory</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Lounge</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Kitchen</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Library</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Hall</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Study</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Dining Room</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Billiard Room</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 				</div>
 
 				<div id="suggestionModal" class="modal">
