@@ -151,8 +151,10 @@ function main() {
 	        	document.getElementById(gameboard.positions[row][col].room + pos).src = "";
         	}
     		currSuggestion = [data.suggestion[0].suspect, data.suggestion[0].weapon, data.suggestion[0].room];
-        	document.getElementById('activityLog').innerHTML += "<div>" + data.name + " suggests " + data.suggestion[0].suspect + " with " +
+        	var element = document.getElementById('activityLog');
+        	element.innerHTML += "<div>" + data.name + " suggests " + data.suggestion[0].suspect + " with " +
 				data.suggestion[0].weapon + " in " + data.suggestion[0].room + "</div>";
+            element.scrollTop = element.scrollHeight;
         	gameboard.placeCharacters();
         });
 
@@ -211,8 +213,10 @@ function main() {
         });
 
         socket.on('proven', function(data) {
-        	document.getElementById('activityLog').innerHTML += "<div>" + data.name + " says " + data.proof + " is not the answer";
-        	document.getElementById('suggestion').disabled = true;
+        	var element = document.getElementById('activityLog');
+        	element.innerHTML += "<div>" + data.name + " says " + data.proof + " is not the answer";
+            element.scrollTop = element.scrollHeight;
+            document.getElementById('suggestion').disabled = true;
    	 		document.getElementById('accusation').disabled = true;
    	 		myPlayer.isTurn = false;
    	 		myPlayer.hasSuggested = false;
@@ -234,7 +238,9 @@ function main() {
                 html += data[1].cards[i].name + ", ";
             }
             html += "</div>";
-            document.getElementById('activityLog').innerHTML += html;
+            var element = document.getElementById('activityLog');
+            element.innerHTML += html;
+            element.scrollTop = element.scrollHeight;
             if (data[0]) {
                 alert('You have solved the mystery');
                 socket.emit('endGame', true);
@@ -250,10 +256,11 @@ function main() {
                 if (Array.isArray(data)) {
                     // Display the name of the character who solved the mystery
                     // and what the answer was
-                    document.getElementById('activityLog').innerHTML += "<div>" + data[0] + 
+                    var element = document.getElementById('activityLog');
+                    element.innerHTML += "<div>" + data[0] +
                                     " solved the mystery. The crime was committed by " + data[1].cards[0].name +
                                     " with a " + data[1].cards[1].name + " in the " + data[1].cards[2].name + "</div>";
-
+                    element.scrollTop = element.scrollHeight;
                     alert('Mystery solved. Redirecting to main page');
                 } else {
                     var txt = "Nobody was able to solve the mystery. The crime was committed by " +
@@ -299,8 +306,10 @@ function main() {
         });
 
         socket.on('insufficient', function(data) {
-        	document.getElementById('chatWindow').innerHTML += "<div>There's not enough players to continue playing.</div>";
-        	resetGame();
+        	var element = document.getElementById('chatWindow');
+        	element.innerHTML += "<div>There's not enough players to continue playing.</div>";
+            element.scrollTop = element.scrollHeight;
+            resetGame();
         	alert('The game has been reset due to insufficient players. Redirecting to main page');
         	returnToMain();
         });
