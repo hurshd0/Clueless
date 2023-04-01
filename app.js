@@ -8,7 +8,7 @@ app.get('/', function(req, res) {
 app.use('/', express.static(__dirname + '/'));
 
 server.listen(8080);
-console.log('Server Started...');
+console.log('Server Started on Port 8080');
 
 var CLIENT_LIST = {};
 var PLAYER_LIST = [];
